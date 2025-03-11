@@ -24,7 +24,7 @@ export const theme: ThemeUserConfig = {
   },
   /** Set a logo image to show in the homepage. */
   logo: {
-    src: 'src/assets/avatar.png',
+    src: 'src/assets/avatar.jpg',
     alt: 'Avatar'
   },
 
@@ -57,25 +57,29 @@ export const theme: ThemeUserConfig = {
 
   /** Configure the footer of your site. */
   footer: {
-    links: [
-      // Registration link
-      {
-        title: 'Moe ICP APTX4869',
-        link: 'https://icp.gov.moe/?keyword=APTX4869',
-        style: 'text-sm' // Uno/TW CSS class
-      },
-      {
-        title: 'Travelling',
-        link: 'https://www.travellings.cn/go.html',
-        style: 'text-sm'
-      },
-      // Privacy Policy link
-      {
-        title: 'Site Policy',
-        link: '/terms/list',
-        pos: 2 // position set to 2 will be appended to copyright line
-      }
-    ],
+    registration: {
+      url: 'xx',
+      text: 'xx',
+    },
+    //   links: [
+    //     // Registration link
+    //     {
+    //       title: 'Moe ICP APTX4869',
+    //       link: 'https://icp.gov.moe/?keyword=APTX4869',
+    //       style: 'text-sm' // Uno/TW CSS class
+    //     },
+    //     {
+    //       title: 'Travelling',
+    //       link: 'https://www.travellings.cn/go.html',
+    //       style: 'text-sm'
+    //     },
+    //     // Privacy Policy link
+    //     {
+    //       title: 'Site Policy',
+    //       link: '/terms/list',
+    //       pos: 2 // position set to 2 will be appended to copyright line
+    //     }
+    //   ],
     /** Enable displaying a “Astro & Pure theme powered” link in your site’s footer. */
     credits: true,
     /** Optional details about the social media accounts for this site. */
@@ -138,7 +142,7 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   waline: {
-    enable: true,
+    enable: false,
     // Server service link
     server: 'https://astro-theme-pure-waline.arthals.ink/',
     // Refer https://waline.js.org/en/guide/features/emoji.html

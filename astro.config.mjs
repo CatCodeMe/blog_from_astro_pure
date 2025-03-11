@@ -9,6 +9,12 @@ import remarkMath from 'remark-math'
 
 // Others
 // import { visualizer } from 'rollup-plugin-visualizer'
+import rehypeCallouts from 'rehype-callouts'
+import remarkBreaks from 'remark-breaks'
+import expressiveCode from 'astro-expressive-code'
+
+import icon from 'astro-icon'
+
 
 // Local integrations
 import { outputCopier } from './src/plugins/output-copier.ts'
@@ -51,9 +57,15 @@ export default defineConfig({
   },
 
   integrations: [
+    expressiveCode(),
     // astro-pure will automatically add sitemap, mdx & unocss
     // sitemap(),
     // mdx(),
+    icon({
+      include: {
+        devicon: ['*'],
+      }
+    }),
     AstroPureIntegration(config),
     // (await import('@playform/compress')).default({
     //   SVG: false,
@@ -76,7 +88,7 @@ export default defineConfig({
   },
   // Markdown Options
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkMath, remarkBreaks],
     rehypePlugins: [
       [rehypeKatex, {}],
       rehypeHeadingIds,
@@ -87,23 +99,24 @@ export default defineConfig({
           properties: { className: ['anchor'] },
           content: { type: 'text', value: '#' }
         }
-      ]
+      ],
+      rehypeCallouts
     ],
     // https://docs.astro.build/en/guides/syntax-highlighting/
-    shikiConfig: {
-      themes: {
-        light: 'github-light',
-        dark: 'github-dark'
-      },
-      transformers: [
-        transformerNotationDiff(),
-        transformerNotationHighlight(),
-        updateStyle(),
-        addTitle(),
-        addLanguage(),
-        addCopyButton(2000)
-      ]
-    }
+    // shikiConfig: {
+    //   themes: {
+    //     light: 'github-light',
+    //     dark: 'github-dark'
+    //   },
+    //   transformers: [
+    //     transformerNotationDiff(),
+    //     transformerNotationHighlight(),
+    //     updateStyle(),
+    //     addTitle(),
+    //     addLanguage(),
+    //     addCopyButton(2000)
+    //   ]
+    // }
   },
   experimental: {
     svg: true,
