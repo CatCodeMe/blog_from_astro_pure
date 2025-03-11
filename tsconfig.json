@@ -46,6 +46,9 @@
       ],
       "@/site-config": [
         "src/site.config.ts"
+      ],
+      "@/custom_plugin/pages/*": [
+        "packages/pure/components/pages/*"
       ]
     }
   },
