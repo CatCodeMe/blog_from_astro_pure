@@ -21,14 +21,14 @@ import { outputCopier } from './src/plugins/output-copier.ts'
 // Local rehype & remark plugins
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
 // Shiki
-import {
-  addCopyButton,
-  addLanguage,
-  addTitle,
-  transformerNotationDiff,
-  transformerNotationHighlight,
-  updateStyle
-} from './src/plugins/shiki-transformers.ts'
+// import {
+//   addCopyButton,
+//   addLanguage,
+//   addTitle,
+//   transformerNotationDiff,
+//   transformerNotationHighlight,
+//   updateStyle
+// } from './src/plugins/shiki-transformers.ts'
 import config from './src/site.config.ts'
 
 // https://astro.build/config
