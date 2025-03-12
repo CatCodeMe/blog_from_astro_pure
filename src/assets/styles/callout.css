@@ -1,0 +1,7 @@
+@import 'rehype-callouts/theme/obsidian';
+
+.callout-content {
+        padding: .5rem .3rem;
+        margin: .2rem .1rem;
+        border-radius: inherit;
+}

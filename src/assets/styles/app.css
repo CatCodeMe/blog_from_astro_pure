@@ -1,18 +1,19 @@
 /* Font */
 @font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/Satoshi-Variable.ttf');
-  font-style: normal;
+  font-family: HYTMR;
   font-display: swap;
+  src: url(https://npm.elemecdn.com/fontcdn-ariasaka@1.0.0/HYTangMeiRen55W.woff2) format("woff2")
 }
+
 @font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/Satoshi-VariableItalic.ttf');
-  font-style: italic;
+  font-family: Monaco;
   font-display: swap;
+  src: url(https://cdn1.tianli0.top/npm/fontcdn-ariasaka@1.0.0/MONACO.TTF) format("truetype")
 }
+
+
 html {
-  font-family: 'Satoshi', sans-serif;
+  font-family: 'HYTMR', sans-serif;
 }
 
 /* Theme */
@@ -38,6 +39,7 @@ html {
   --ring: 240 5.9% 10%;
   --radius: 0.5rem;
 }
+
 .dark {
   --background: 240 20.54% 5.2%;
   --foreground: 0 0% 98%;
@@ -59,9 +61,11 @@ html {
   --input: 240 3.7% 15.9%;
   --ring: 240 4.9% 83.9%;
 }
+
 :root {
   --un-default-border-color: hsl(var(--border) / 1);
 }
+
 html.dark {
   color-scheme: dark;
 }
@@ -69,6 +73,7 @@ html.dark {
 /* Global */
 a {
   transition: color 0.2s ease;
+
   &:hover {
     color: hsl(var(--primary) / var(--un-text-opacity, 1));
   }

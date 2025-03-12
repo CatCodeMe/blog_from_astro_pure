@@ -100,7 +100,11 @@ export default defineConfig({
           content: { type: 'text', value: '#' }
         }
       ],
-      rehypeCallouts
+      [rehypeCallouts, {
+        props: {
+          containerProps: { class: ['callout', 'not-prose'] },
+        }
+      }]
     ],
     // https://docs.astro.build/en/guides/syntax-highlighting/
     // shikiConfig: {
