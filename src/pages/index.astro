@@ -13,35 +13,24 @@ import avatar from '@/assets/avatar.jpg'
 import config from '@/site-config'
 
 const languages = [
-  { name: 'HTML', icon: 'devicon:html5' },
-  { name: 'JavaScript', icon: 'devicon:javascript' },
-  { name: 'CSS', icon: 'devicon:css3' },
-  { name: 'java', icon: 'devicon:java' },
-  { name: 'zig', icon: 'devicon:zig' },
-  { name: 'python', icon: 'devicon:python' },
+  { name: 'Java', icon: 'devicon:java' },
+  { name: 'Zig', icon: 'devicon:zig' },
+  { name: 'Python', icon: 'devicon:python' },
   { name: 'Shell', icon: 'devicon:bash' }
 ]
 
-const frontend = [
-  { name: 'TypeScript', icon: 'devicon:typescript' },
-  { name: 'Vite', icon: 'devicon:vitejs' },
-  { name: 'Webpack', icon: 'devicon:webpack' },
-  { name: 'Astro', icon: 'devicon:astro' },
-  { name: 'TypeScript', icon: 'devicon:typescript' },
-  { name: 'Vite', icon: 'devicon:vitejs' },
-  { name: 'Webpack', icon: 'devicon:webpack' },
-  { name: 'Astro', icon: 'devicon:astro' },
-  { name: 'TypeScript', icon: 'devicon:typescript' },
-  { name: 'Vite', icon: 'devicon:vitejs' },
-  { name: 'Webpack', icon: 'devicon:webpack' },
-  { name: 'Astro', icon: 'devicon:astro' },
-  { name: 'TypeScript', icon: 'devicon:typescript' },
-  { name: 'Vite', icon: 'devicon:vitejs' },
-  { name: 'Webpack', icon: 'devicon:webpack' },
-  { name: 'Astro', icon: 'devicon:astro' }
+const backend = [
+  { name: 'Spring', icon: 'devicon:spring' },
+  { name: 'Redis', icon: 'devicon:redis' },
+  { name: 'ClickHouse', icon: 'devicon:clickhouse' },
+  { name: 'Mysql', icon: 'devicon:mysql' },
+  { name: 'Apache Spark', icon: 'devicon:apachespark' }
 ]
 
-const backend = [{ name: 'Vercel', icon: 'devicon:vercel' }]
+const ide = [
+  { name: 'VSCode', icon: 'devicon:vscode' },
+  { name: 'IntelliJ IDEA', icon: 'devicon:intellij' }
+]
 
 const MAX_POSTS = 10
 const allPosts = await getBlogCollection()
@@ -81,7 +70,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
       >
         <span class='relative flex items-center justify-center'>
           <span
-            class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
+            class='absolute size-2 animate-ping rounded-full border border-red-400 bg-green-400 opacity-75'
           ></span>
           <span class='size-2 rounded-full bg-green-400'></span>
         </span>
@@ -91,11 +80,10 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 
     <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
       <Section title='About'>
-        <p class='text-muted-foreground'>Developer / Designer</p>
+        <p class='text-muted-foreground'>Developer</p>
         <p class='text-muted-foreground'>
-          Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione
-          indoctum dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel,
-          at eum oratio possit voluptatum.
+          I'm a software engineer based in Beijing, China. I'm passionate about programming and
+          open-source. I'm currently working on a few projects and learning new things every day.
         </p>
         <Button title='More about me' class='w-fit self-end' href='/about' style='ahead' />
       </Section>
@@ -114,100 +102,51 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         )
       }
 
-      {
-        /* <Section title='Experience'>
-      <Card
-        heading='Lorem Ipsum'
-        subheading='Sit amet consectetur'
-        date='Dec 2022 - Nov 2023'
-        imagePath='/src/assets/about-astro.png'
-        altText='Lorem, ipsum dolor sit'
-        imageClass='h-12 w-auto md:-start-16'
-      >
-        <ul class='ms-4 list-disc text-muted-foreground'>
-          <li>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
-            molestiae laboriosam pariatur!
-
-            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
-          </li>
-        </ul>
-      </Card>
-      <Card
-        heading='Lorem Ipsum'
-        subheading='Sit amet consectetur'
-        date='Dec 2022 - Nov 2023'
-        imagePath='/src/assets/about-astro.png'
-        altText='Lorem, ipsum dolor sit'
-        imageClass='h-12 w-auto md:-start-16'
-      />
-    </Section> */
-      }
-      <Section title='Education'>
+      <Section title=''>
         <Card
-          as='a'
-          heading='Lorem ipsum'
-          subheading='Lorem ipsum dolor sit amet, vidit suscipit at mei.'
-          date='August 2021 - July 2025'
-          href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+          class='bg-gradient-to-br from-[#faf6f1] to-[#e6d5bc] dark:from-[#2d2418] dark:to-[#1a1612] border-[#d4c5a9] dark:border-[#4a3f2c]'
         >
           {
-            /* <ul class='ms-4 list-disc text-muted-foreground'>
-          <li>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
-            molestiae laboriosam pariatur!
-          </li>
-          <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
-        </ul> */
+            (
+              <div class='flex flex-col gap-y-3'>
+                <div class='text-center'>
+                  <h3 class='text-xl font-medium text-[#6b573c] dark:text-[#d2b48c]'>
+                    贺新郎·读史
+                  </h3>
+                  <p class='text-sm text-[#8b7355] dark:text-[#a08b6c] mt-2'>毛主席 / 1964</p>
+                </div>
+
+                <div class='flex flex-col gap-y-3 text-[#6b573c] dark:text-[#b9a89c]'>
+                  <div class='flex flex-col gap-y-2'>
+                    <div class='flex flex-col space-y-1'>
+                      <p class='indent-8'>
+                        人猿相揖别，只几个石头磨过，小儿时节。铜铁炉中翻火焰，为问何时猜得？
+                        不过几千寒热。人世难逢开口笑，上疆场彼此弯弓月。流遍了，郊原血。
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class='flex flex-col gap-y-2'>
+                    <div class='flex flex-col space-y-1'>
+                      <p class='indent-8'>
+                        一篇读罢头飞雪，但记得斑斑点点，几行陈迹。五帝三皇神圣事，骗了无涯过客。
+                        有多少风流人物？盗跖庄蹻流誉后，更陈王奋起挥黄钺。歌未竟，东方白。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
           }
         </Card>
       </Section>
 
-      <Section title='Website List'>
-        <div class='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='dolor sit amet, oratio ornatus explicari pro ex'
-            imagePath='/src/assets/projects/alex-tyson-2BAXJ7ha74s-unsplash.jpg'
-          />
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='dolor sit amet, oratio ornatus explicari pro ex'
-            imagePath='/src/assets/projects/angelica-teran-Bk9hpaXHK4o-unsplash.jpg'
-          />
-          <ProjectCard
-            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-            heading='Lorem ipsum'
-            subheading='dolor sit amet, oratio ornatus explicari pro ex'
-            imagePath='/src/assets/projects/kseniia-zapiatkina-yATU3rg8tNI-unsplash.jpg'
-          />
-          <ProjectCard
-            href='/projects'
-            heading='More projects'
-            subheading='Check out more projects'
-            imagePath='/src/assets/projects/wen-qiao-g_w8I64FiO0-unsplash.jpg'
-          />
-        </div>
-      </Section>
-
-      <Section title='Certifications'>
-        <Card
-          as='a'
-          heading='Lorem ipsum'
-          subheading='Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione indoctum dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel, at eum oratio possit voluptatum. Dicat ceteros cu vim. Impetus fuisset ullamcorper pri cu, his posse iisque ad, aliquam honestatis usu id.'
-          date='July 2024'
-          href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-        />
-      </Section>
-
       <Section title='Skills'>
         <SkillLayout title='Languages' skills={languages} />
-        <SkillLayout title='Frontend' skills={frontend} />
         <SkillLayout title='Backend' skills={backend} />
+        <SkillLayout title='Ide' skills={ide} />
       </Section>
     </div>
-    <Quote class='mt-12' />
+    <!-- <Quote class='mt-12' /> -->
   </main>
 </PageLayout>
