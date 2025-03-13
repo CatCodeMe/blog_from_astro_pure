@@ -10,6 +10,16 @@ heroImage: { src: './thumbnail.jpg', color: '#64574D' }
 language: 'English'
 ---
 
+> [!note]
+> Highlights information that users should take into account, even when skimming.
+
+> [!TIP] You can customize the `title`！
+> Optional information to help a user be more successful.
+
+> [!tldr]- This is a **collapsible** callout, **initially close**.
+> Crucial information necessary for users to succeed.
+
+
 ## Site Configuration
 
 [astro-theme-pure](https://github.com/cworld1/astro-theme-pure)

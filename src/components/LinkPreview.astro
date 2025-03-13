@@ -1,0 +1,205 @@
+---
+import { getCollection } from 'astro:content'
+
+interface Props {
+  href: string
+  isNested?: boolean // 新增属性
+}
+
+const { href, isNested = false } = Astro.props
+
+// 使用字符串方法处理路径
+const trimSlash = (str: string) => {
+  let result = str
+  while (result.startsWith('/')) {
+    result = result.slice(1)
+  }
+  while (result.endsWith('/')) {
+    result = result.slice(0, -1)
+  }
+  return result
+}
+const normalizedHref = trimSlash(href)
+const segments = normalizedHref.split('/')
+const collection = segments[0] // 通常是 'blog'
+
+// const content1 = await import(`../content/${normalizedHref}`)
+// const { Content } = content1
+
+// let ContentX = Content
+let ContentX
+let frontmatter
+let entry
+
+try {
+  // 获取集合中的所有条目
+  const entries = await getCollection(collection)
+  // 查找匹配的条目
+  entry = entries.find((entry) => {
+    const path = trimSlash(entry.filePath)
+    return path.includes(normalizedHref) || path.includes(`${normalizedHref}/index`)
+  })
+
+  //   console.log('no', normalizedHref, 'path', entry)
+  //   console.log(normalizedHref, `/src/content/${normalizedHref}.mdx`, entry?.filePath)
+
+  if (entry) {
+    /* @vite-ignore */
+    const content1 = await import(`/${entry?.filePath}`) //必须有前缀/,
+    const { Content } = content1
+    ContentX = Content
+    frontmatter = null
+  } else {
+    throw new Error('Entry not found')
+  }
+} catch (error) {
+  //   console.error('Failed to load content:', error)
+  //   const ErrorComponent = () => `<div>内容加载失败</div>`
+  //   Content = ErrorComponent
+  //   frontmatter = { title: '404 Not Found' }
+}
+
+// 添加一个辅助函数来检查是否在预览窗口内
+// function isInsidePreview() {
+//   return (
+//     Astro.slots.has('default') &&
+//     (Astro.slots.get('default') || '').toString().includes('link-preview')
+//   )
+// }
+
+// const isPreview = isInsidePreview()
+---
+
+<div class='link-preview-wrapper'>
+  <a href={href} class:list={['internal-link', { 'no-preview': isNested }]}>
+    <slot />
+    <span class='internal-icon'>↗</span>
+  </a>
+  {
+    !isNested && (
+      <div class='link-preview'>
+        <div class='preview-content'>
+          {frontmatter && <h3>{frontmatter.title}</h3>}
+          <div class='rendered-content'>
+            <ContentX isNested={true} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  // 修改预览位置调整逻辑
+  function adjustPreviewPosition() {
+    const previewWrappers = document.querySelectorAll('.link-preview-wrapper:not(.no-preview)')
+
+    previewWrappers.forEach((wrapper) => {
+      const preview = wrapper.querySelector('.link-preview')
+      if (!preview) return
+
+      wrapper.addEventListener('mouseenter', () => {
+        const rect = wrapper.getBoundingClientRect()
+        const previewRect = preview.getBoundingClientRect()
+        const windowHeight = window.innerHeight
+
+        // 重置位置样式
+        preview.style.top = ''
+        preview.style.bottom = ''
+
+        // 检查下方空间是否足够
+        if (rect.bottom + previewRect.height > windowHeight) {
+          // 如果下方空间不足，向上显示
+          preview.style.bottom = '100%'
+          preview.style.top = 'auto'
+        } else {
+          // 向下显示
+          preview.style.top = '100%'
+          preview.style.bottom = 'auto'
+        }
+      })
+    })
+  }
+
+  // 页面加载时初始化
+  adjustPreviewPosition()
+  // 窗口大小改变时重新计算
+  window.addEventListener('resize', adjustPreviewPosition)
+</script>
+
+<style>
+  .link-preview-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .internal-link {
+    text-decoration: none;
+    color: #0066cc;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .internal-icon {
+    font-size: 0.8em;
+    opacity: 0.7;
+  }
+
+  .link-preview {
+    display: none;
+    position: absolute;
+    left: 0;
+    width: 400px;
+    max-height: 400px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .link-preview-wrapper:hover .link-preview {
+    display: block;
+  }
+
+  .preview-content {
+    font-size: 0.9rem;
+  }
+
+  .rendered-content {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  /* 添加淡入动画 */
+  .link-preview {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .link-preview-wrapper:hover .link-preview {
+    opacity: 1;
+  }
+
+  /* 预览窗口内的链接样式 */
+  .no-preview {
+    color: inherit;
+    opacity: 0.8;
+  }
+
+  .no-preview:hover {
+    opacity: 1;
+  }
+
+  .no-preview .internal-icon {
+    font-size: 0.7em;
+  }
+
+  /* 确保预览窗口内的链接不触发预览 */
+  .link-preview .link-preview-wrapper:hover .link-preview {
+    display: none;
+  }
+</style>
