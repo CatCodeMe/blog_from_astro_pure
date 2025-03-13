@@ -39,7 +39,7 @@ export function setTheme(theme?: string, save = false) {
   // 强制更新 expressive-code 主题
   const codeBlocks = document.querySelectorAll('.expressive-code');
   codeBlocks.forEach((block) => {
-    block.setAttribute('data-theme', targetTheme === 'dark' ? 'houston' : 'github-light');
+    block.setAttribute('data-theme', targetTheme === 'dark' ? 'github-dark' : 'github-light');
   });
   return theme
 }
