@@ -102,6 +102,12 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         )
       }
 
+      <Section title='Skills'>
+        <SkillLayout title='Languages' skills={languages} />
+        <SkillLayout title='Backend' skills={backend} />
+        <SkillLayout title='Ide' skills={ide} />
+      </Section>
+
       <Section title=''>
         <Card
           class='bg-gradient-to-br from-[#faf6f1] to-[#e6d5bc] dark:from-[#2d2418] dark:to-[#1a1612] border-[#d4c5a9] dark:border-[#4a3f2c]'
@@ -110,9 +116,9 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
             (
               <div class='flex flex-col gap-y-3'>
                 <div class='text-center'>
-                  <h3 class='text-xl font-medium text-[#6b573c] dark:text-[#d2b48c]'>
+                  <h2 class='text-xl font-medium text-[#6b573c] dark:text-[#d2b48c]'>
                     贺新郎·读史
-                  </h3>
+                  </h2>
                   <p class='text-sm text-[#8b7355] dark:text-[#a08b6c] mt-2'>毛主席 / 1964</p>
                 </div>
 
@@ -139,12 +145,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
             )
           }
         </Card>
-      </Section>
-
-      <Section title='Skills'>
-        <SkillLayout title='Languages' skills={languages} />
-        <SkillLayout title='Backend' skills={backend} />
-        <SkillLayout title='Ide' skills={ide} />
       </Section>
     </div>
     <!-- <Quote class='mt-12' /> -->

@@ -39,8 +39,8 @@ const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
         }
         {/* Position 2 */}
         <div>
-          © {year}
           {config.author}
+          @ {year}
           {
             footerConf.links && footerConf.links.length > 0 && (
               <>
@@ -62,7 +62,7 @@ const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
         </div>
         {
           footerConf.credits && (
-            <span>
+            <span class='inline-flex items-center'>
               <a href='https://github.com/withastro/astro' target='_blank'>
                 Astro
               </a>
@@ -70,7 +70,7 @@ const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
               <a href='https://github.com/cworld1/astro-theme-pure' target='_blank'>
                 Pure
               </a>
-              theme powered
+              theme <Icon name='heart' class='inline-block m-.3rem size-1rem' /> powered
             </span>
           )
         }
