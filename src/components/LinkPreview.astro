@@ -1,12 +1,13 @@
 ---
-import { getCollection } from 'astro:content'
+import { getEntry, render } from 'astro:content'
+import { Icon } from 'packages/pure/components/user'
 
 interface Props {
   href: string
-  isNested?: boolean // 新增属性
+  isPreview?: boolean
 }
 
-const { href, isNested = false } = Astro.props
+const { href, isPreview = false } = Astro.props
 
 // 使用字符串方法处理路径
 const trimSlash = (str: string) => {
@@ -19,69 +20,74 @@ const trimSlash = (str: string) => {
   }
   return result
 }
+
 const normalizedHref = trimSlash(href)
-const segments = normalizedHref.split('/')
+const segments: string[] = normalizedHref.split('/')
 const collection = segments[0] // 通常是 'blog'
+const slug = segments.slice(1).join('/') // 获取除了集合名称外的部分作为 slug
 
-// const content1 = await import(`../content/${normalizedHref}`)
-// const { Content } = content1
+let RenderedContent
+let frontmatter = {}
+let notFound = false
 
-// let ContentX = Content
-let ContentX
-let frontmatter
-let entry
+// 只有当不是在预览内部时，才渲染预览内容
+if (!isPreview) {
+  try {
+    const entry = await getEntry(collection, slug)
 
-try {
-  // 获取集合中的所有条目
-  const entries = await getCollection(collection)
-  // 查找匹配的条目
-  entry = entries.find((entry) => {
-    const path = trimSlash(entry.filePath)
-    return path.includes(normalizedHref) || path.includes(`${normalizedHref}/index`)
-  })
+    if (!entry) {
+      notFound = true
+    } else {
+      // 创建一个自定义的LinkPreview组件，它不会创建预览
+      const PreviewLinkPreview = (props) => {
+        // 返回一个普通的a标签，不包含预览功能
+        return `<a href="${props.href}" class="internal-link preview-nested-link">
+                  ${props.children}
+                  <span class="internal-icon">
+                    <Icon name="inner_link" size=".5em" />
+                  </span>
+                </a>`
+      }
 
-  //   console.log('no', normalizedHref, 'path', entry)
-  //   console.log(normalizedHref, `/src/content/${normalizedHref}.mdx`, entry?.filePath)
+      // 使用自定义组件渲染内容
+      const { Content, remarkPluginFrontmatter } = await render(entry, {
+        components: {
+          // 替换所有LinkPreview组件为我们的自定义组件
+          LinkPreview: PreviewLinkPreview
+        }
+      })
 
-  if (entry) {
-    /* @vite-ignore */
-    const content1 = await import(`/${entry?.filePath}`) //必须有前缀/,
-    const { Content } = content1
-    ContentX = Content
-    frontmatter = null
-  } else {
-    throw new Error('Entry not found')
+      RenderedContent = Content
+      frontmatter = {
+        ...entry.data,
+        ...remarkPluginFrontmatter
+      }
+    }
+  } catch (error) {
+    console.error(`Error rendering preview for ${href}:`, error)
+    notFound = true
   }
-} catch (error) {
-  //   console.error('Failed to load content:', error)
-  //   const ErrorComponent = () => `<div>内容加载失败</div>`
-  //   Content = ErrorComponent
-  //   frontmatter = { title: '404 Not Found' }
 }
-
-// 添加一个辅助函数来检查是否在预览窗口内
-// function isInsidePreview() {
-//   return (
-//     Astro.slots.has('default') &&
-//     (Astro.slots.get('default') || '').toString().includes('link-preview')
-//   )
-// }
-
-// const isPreview = isInsidePreview()
 ---
 
-<div class='link-preview-wrapper'>
-  <a href={href} class:list={['internal-link', { 'no-preview': isNested }]}>
+<div class:list={['link-preview-wrapper', isPreview ? 'is-preview-link' : '']}>
+  <a href={href} class:list={['internal-link']}>
     <slot />
-    <span class='internal-icon'>↗</span>
+    <span class='internal-icon'>
+      <Icon name={notFound ? 'inner_link_404' : 'inner_link'} size='.5em' />
+    </span>
   </a>
   {
-    !isNested && (
+    !isPreview && RenderedContent && (
       <div class='link-preview'>
+        <div class='preview-header'>
+          <slot />
+        </div>
+        <hr />
         <div class='preview-content'>
-          {frontmatter && <h3>{frontmatter.title}</h3>}
+          {frontmatter?.title && <h3>{frontmatter.title}</h3>}
           <div class='rendered-content'>
-            <ContentX isNested={true} />
+            <RenderedContent />
           </div>
         </div>
       </div>
@@ -90,9 +96,32 @@ try {
 </div>
 
 <script>
+  // 为预览内容中的所有链接添加isPreview属性
+  function processPreviewLinks() {
+    // 查找所有预览内容
+    const previewContents = document.querySelectorAll('.rendered-content')
+
+    previewContents.forEach((content) => {
+      // 找到所有不是预览链接的内部链接
+      const internalLinks = content.querySelectorAll('.internal-link:not(.preview-nested-link)')
+
+      // 为每个链接添加isPreview属性
+      internalLinks.forEach((link) => {
+        // 这里我们使用data属性来标记
+        link.setAttribute('data-is-preview', 'true')
+
+        // 添加到链接所在的wrapper上
+        const wrapper = link.closest('.link-preview-wrapper')
+        if (wrapper) {
+          wrapper.classList.add('is-preview-link')
+        }
+      })
+    })
+  }
+
   // 修改预览位置调整逻辑
   function adjustPreviewPosition() {
-    const previewWrappers = document.querySelectorAll('.link-preview-wrapper:not(.no-preview)')
+    const previewWrappers = document.querySelectorAll('.link-preview-wrapper:not(.is-preview-link)')
 
     previewWrappers.forEach((wrapper) => {
       const preview = wrapper.querySelector('.link-preview')
@@ -102,10 +131,13 @@ try {
         const rect = wrapper.getBoundingClientRect()
         const previewRect = preview.getBoundingClientRect()
         const windowHeight = window.innerHeight
+        const windowWidth = window.innerWidth
 
         // 重置位置样式
         preview.style.top = ''
         preview.style.bottom = ''
+        preview.style.left = ''
+        preview.style.right = ''
 
         // 检查下方空间是否足够
         if (rect.bottom + previewRect.height > windowHeight) {
@@ -117,12 +149,27 @@ try {
           preview.style.top = '100%'
           preview.style.bottom = 'auto'
         }
+
+        // 检查右侧空间是否足够
+        if (rect.left + previewRect.width > windowWidth) {
+          // 右侧空间不足，向左显示
+          preview.style.right = '0'
+          preview.style.left = 'auto'
+        } else {
+          // 向右显示
+          preview.style.left = '0'
+          preview.style.right = 'auto'
+        }
       })
     })
   }
 
-  // 页面加载时初始化
-  adjustPreviewPosition()
+  // 页面加载时处理
+  document.addEventListener('DOMContentLoaded', () => {
+    processPreviewLinks()
+    adjustPreviewPosition()
+  })
+
   // 窗口大小改变时重新计算
   window.addEventListener('resize', adjustPreviewPosition)
 </script>
@@ -146,6 +193,18 @@ try {
     opacity: 0.7;
   }
 
+  /* 预览内部的链接样式 */
+  .preview-nested-link,
+  .is-preview-link .internal-link {
+    color: inherit;
+    opacity: 0.8;
+  }
+
+  .preview-nested-link:hover,
+  .is-preview-link .internal-link:hover {
+    opacity: 1;
+  }
+
   .link-preview {
     display: none;
     position: absolute;
@@ -161,8 +220,19 @@ try {
     overflow-y: auto;
   }
 
-  .link-preview-wrapper:hover .link-preview {
+  /* 确保预览内部的链接不会显示预览 */
+  .is-preview-link .link-preview,
+  .rendered-content .link-preview {
+    display: none !important;
+  }
+
+  .link-preview-wrapper:not(.is-preview-link):hover .link-preview {
     display: block;
+  }
+
+  .preview-header {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
   }
 
   .preview-content {
@@ -182,24 +252,5 @@ try {
 
   .link-preview-wrapper:hover .link-preview {
     opacity: 1;
-  }
-
-  /* 预览窗口内的链接样式 */
-  .no-preview {
-    color: inherit;
-    opacity: 0.8;
-  }
-
-  .no-preview:hover {
-    opacity: 1;
-  }
-
-  .no-preview .internal-icon {
-    font-size: 0.7em;
-  }
-
-  /* 确保预览窗口内的链接不触发预览 */
-  .link-preview .link-preview-wrapper:hover .link-preview {
-    display: none;
   }
 </style>
