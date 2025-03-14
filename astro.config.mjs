@@ -88,7 +88,7 @@ export default defineConfig({
   },
   // Markdown Options
   markdown: {
-    remarkPlugins: [remarkMath, remarkBreaks],
+    remarkPlugins: [remarkMath,  remarkBreaks],
     rehypePlugins: [
       [rehypeKatex, {}],
       rehypeHeadingIds,

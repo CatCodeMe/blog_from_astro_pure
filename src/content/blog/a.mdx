@@ -1,6 +1,6 @@
 ---
-title: 外部 a的标题
-publishDate: 2024-07-27
+title: 我是a的标题
+publishDate: 2025-07-27
 description: 'astro-theme-pure Personalized Customization Guide'
 tags:
   - Waline
@@ -11,13 +11,17 @@ language: 'English'
 
 我是外部的 a
 
-import LinkPreview from '@/components/LinkPreview.astro';
+import Card3D from '@/components/Card3D.astro';
+import styles from '@/assets/styles/card-layout.module.css';
 
-<LinkPreview href="/blog/customize/a">
-  custom/a
-</LinkPreview>
-123
+<div class={styles.container}>
+  <div class={styles.five_per_row}>
+    <Card3D src="/src/assets/avatar.jpg" />
+    <Card3D src="/src/assets/avatar.jpg" />
+    <Card3D src="/src/assets/avatar.jpg" />
+    <Card3D src="/src/assets/avatar.jpg" />
+    <Card3D src="/src/assets/avatar.jpg" />
+  </div>
+</div>
 
-<LinkPreview href="/blog/customize/">
-  custom
-</LinkPreview>
+

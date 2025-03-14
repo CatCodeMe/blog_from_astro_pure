@@ -64,13 +64,13 @@ const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
           footerConf.credits && (
             <span class='inline-flex items-center'>
               <a href='https://github.com/withastro/astro' target='_blank'>
-                Astro
+                {Astro.generator}
               </a>
-              &
+              {' & '}
               <a href='https://github.com/cworld1/astro-theme-pure' target='_blank'>
-                Pure
+                Pure theme
               </a>
-              theme <Icon name='heart' class='inline-block m-.3rem size-1rem' /> powered
+              <Icon name='heart' class='inline-block m-.3rem size-1rem' /> powered
             </span>
           )
         }
