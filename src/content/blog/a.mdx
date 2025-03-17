@@ -12,16 +12,20 @@ language: 'English'
 我是外部的 a
 
 import Card3D from '@/components/Card3D.astro';
-import styles from '@/assets/styles/card-layout.module.css';
+// import styles from '@/assets/styles/card-layout.module.css';
+import Card3DDesk from '@/components/Card3DDesk.astro';
 
-<div class={styles.container}>
-  <div class={styles.five_per_row}>
-    <Card3D src="/src/assets/avatar.jpg" />
-    <Card3D src="/src/assets/avatar.jpg" />
-    <Card3D src="/src/assets/avatar.jpg" />
-    <Card3D src="/src/assets/avatar.jpg" />
-    <Card3D src="/src/assets/avatar.jpg" />
-  </div>
-</div>
+<Card3DDesk maxPerRow={5}>
+  <Card3D src="/src/assets/avatar.jpg" />
+  <Card3D src="/src/assets/avatar.jpg" />
+  <Card3D src="/src/assets/avatar.jpg" />
+  <Card3D src="/src/assets/avatar.jpg" />
+  <Card3D src="/src/assets/avatar.jpg" />
+  <Card3D src="/src/assets/avatar.jpg" />
+  <Card3D src="/src/assets/avatar.jpg" />
+</Card3DDesk>
+
+  <Card3D src="/src/assets/avatar.jpg" />
+
 
 

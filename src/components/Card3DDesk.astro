@@ -1,0 +1,195 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'div'> {
+  class?: string
+  maxPerRow?: number // 添加每行最大卡片数配置
+}
+
+const {
+  class: className,
+  maxPerRow = 5, // 默认每行最多5张
+  ...props
+} = Astro.props
+---
+
+<div class:list={['cards-desk', className]} {...props}>
+  <slot />
+</div>
+
+<script>
+  const pokerValues = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+
+  document.querySelectorAll('.cards-desk').forEach((desk) => {
+    const cards = desk.querySelectorAll('.cards-container')
+    cards.forEach((card, index) => {
+      card.style.setProperty('--n', `${index + 1}`)
+      const valueIndex = index % 13
+      const value = pokerValues[valueIndex]
+      card.setAttribute('data-value', value)
+      // 偶数红色，奇数黑色
+      card.classList.add(index % 2 === 0 ? 'black-number' : 'red-number')
+      card.setAttribute('data-number', `${index + 1}`)
+    })
+  })
+</script>
+
+<style define:vars={{ maxPerRow }}>
+  .cards-desk {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--theme-rgb, 0, 116, 224), 0.05) 0%,
+      rgba(var(--theme-rgb, 0, 116, 224), 0.1) 100%
+    );
+    padding: 20px;
+    border-radius: 12px;
+    margin: 10px 0;
+    position: relative;
+    width: 100%;
+    min-height: 250px; /* 增加容器高度 */
+  }
+
+  .cards-desk :global(.cards-container) {
+    position: absolute;
+    width: calc((100% - (var(--maxPerRow) - 1) * 20px) / var(--maxPerRow));
+    transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1); /* 优化过渡效果 */
+    transform: translateX(calc((var(--n) - 1) * 30px));
+    transform-origin: center left; /* 添加变换原点 */
+  }
+
+  /* 左上角标号和花色 */
+  .cards-desk :global(.cards-container)::before {
+    content: attr(data-value) '\A' attr(data-suit);
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    white-space: pre;
+    line-height: 1.2;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow:
+      -1px -1px 0 rgba(255, 255, 255, 0.7),
+      1px -1px 0 rgba(255, 255, 255, 0.7),
+      -1px 1px 0 rgba(255, 255, 255, 0.7),
+      1px 1px 0 rgba(255, 255, 255, 0.7); /* 文字描边效果 */
+    z-index: 2;
+  }
+
+  /* hover 时当前卡片保持原样 */
+  .cards-desk :global(.cards-container:hover) {
+    transform: translateX(calc((var(--n) - 1) * 30px)) scale(1.1);
+    filter: brightness(1);
+    z-index: 10;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  /* 最右侧卡片样式 */
+  .cards-desk :global(.cards-container:last-child) {
+    z-index: 2;
+  }
+
+  /* 最右侧的卡片默认显示完整 */
+  .cards-desk :global(.cards-container:last-child) {
+    filter: brightness(1);
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* hover 时当前卡片显示完整 */
+  .cards-desk :global(.cards-container:hover) {
+    transform: translateX(calc((var(--n) - 1) * 30px)) scale(1.1);
+    filter: brightness(1);
+    z-index: 10;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  /* hover 时序号样式变化 */
+  .cards-desk :global(.cards-container:hover)::before {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: white;
+  }
+
+  /* hover 时其他卡片效果 */
+  .cards-desk :global(.cards-container:hover) ~ :global(.cards-container) {
+    transform: translateX(calc((var(--n) - 1) * 30px + 50px));
+    filter: brightness(0.7);
+  }
+
+  /* 超出 maxPerRow 的卡片移动到下一行 */
+  .cards-desk :global(.cards-container:nth-child(n + calc(var(--maxPerRow) + 1))) {
+    transform: translateY(40px) translateX(calc((var(--n) - var(--maxPerRow) - 1) * 30px));
+  }
+
+  /* 左上角数字 */
+  .cards-desk :global(.cards-container)::before {
+    content: attr(data-number);
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 2;
+    padding: 4px 8px;
+    border-radius: 4px;
+    opacity: 0.6; /* 默认半透明 */
+    transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left top;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 数字颜色样式 */
+  .cards-desk :global(.black-number)::before {
+    color: #1a1a1a;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+
+  .cards-desk :global(.red-number)::before {
+    color: #dc2626;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+
+  /* 默认状态不添加遮罩和阴影 */
+  .cards-desk :global(.cards-container) {
+    filter: brightness(1);
+  }
+
+  /* hover 时当前卡片效果 */
+  .cards-desk :global(.cards-container:hover) {
+    transform: translateX(calc((var(--n) - 1) * 30px)) scale(1.1);
+    z-index: 10;
+    filter: brightness(1.05); /* 轻微提亮 */
+  }
+
+  /* hover 时其他卡片添加遮罩 */
+  .cards-desk :global(.cards-container:hover) ~ :global(.cards-container),
+  .cards-desk :global(.cards-container:not(:hover)):not(:last-child) {
+    filter: brightness(0.7);
+  }
+
+  /* 最右侧卡片永远保持原始亮度 */
+  .cards-desk :global(.cards-container:last-child) {
+    filter: brightness(1);
+    z-index: 2;
+  }
+
+  /* hover 时序号效果 */
+  .cards-desk :global(.cards-container:hover)::before {
+    opacity: 1;
+    transform: scale(1.2);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* hover 时其他卡片的效果 */
+  .cards-desk :global(.cards-container:hover) ~ :global(.cards-container) {
+    transform: translateX(calc((var(--n) - 1) * 30px + 40px));
+    filter: brightness(0.7);
+  }
+
+  /* 最近查看过的卡片效果 */
+  .cards-desk :global(.cards-container:not(:hover)) {
+    transition-duration: 3s; /* 延长返回时的过渡时间 */
+  }
+</style>
