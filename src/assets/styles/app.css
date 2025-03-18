@@ -38,6 +38,7 @@ html {
   --input: 240 5.9% 90%;
   --ring: 240 5.9% 10%;
   --radius: 0.5rem;
+  --callout-background: 0 0% 100%;
 }
 
 .dark {
@@ -60,6 +61,7 @@ html {
   --border: 240 3.7% 19.9%;
   --input: 240 3.7% 15.9%;
   --ring: 240 4.9% 83.9%;
+  --callout-background: 240 10% 3.9%;
 }
 
 :root {
