@@ -10,11 +10,10 @@ export function pluginLanguageBadge() {
         right: calc(${cssVar('borderWidth')} + ${cssVar('uiPaddingInline')} / 2);
         top: calc(${cssVar('borderWidth')} + 0.35rem);
         height: 1.5rem;
-        padding: 0 0 0 2rem;
+        padding: 0 0.5rem 0 2rem;
         content: attr(data-language);
         font-size: 0.75rem;
-        color: hsl(var(--primary));
-        background-color: transparent;
+        color: hsl(var(--primary) / var(--un-text-opacity, 1));
         pointer-events: none;
         transition: opacity 0.2s;
         display: inline-flex;
@@ -23,6 +22,7 @@ export function pluginLanguageBadge() {
         background-position: 0.5rem 50%;
         background-repeat: no-repeat;
         background-size: 0.9rem 0.9rem;
+        background-color: hsl(var(--background) / var(--un-bg-opacity, 1));
       }
       
       /* 为不同语言设置背景图标 */

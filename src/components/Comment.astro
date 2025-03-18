@@ -1,0 +1,149 @@
+---
+import config from '../site.config'
+
+const walineClientPath = `${config.npmCDN}/@waline/client@v3/dist/waline.js`
+const walineStylePath = `${config.npmCDN}/@waline/client@v3/dist/waline.css`
+const { waline } = config.integ
+
+// 构建完整的 emoji CDN 路径
+const emojiMaps = {
+  weibo: `${config.npmCDN}/@waline/emojis@1.2.0/weibo`
+  // 可以添加更多 emoji 包
+}
+---
+
+{
+  waline.enable && (
+    <>
+      <link rel='stylesheet' href={walineStylePath} />
+      <div class='waline-container'>
+        <div id='waline' />
+      </div>
+    </>
+  )
+}
+
+<script define:vars={{ walineConfig: waline, walineClientPath, emojiMaps }}>
+  ;(async function () {
+    if (!walineConfig.enable) return
+
+    try {
+      const { init } = await import(walineClientPath)
+
+      init({
+        el: '#waline',
+        serverURL: walineConfig.server,
+        requestOptions: {
+          credentials: 'include'
+        },
+        // 正确构建 emoji 路径
+        emoji: walineConfig.emoji
+          ?.filter((name) => name in emojiMaps)
+          .map((name) => emojiMaps[name]),
+        dark: 'html.dark',
+        meta: ['nick', 'mail'],
+        requiredMeta: ['nick'],
+        lang: 'zh-CN',
+        ...walineConfig.additionalConfigs
+      })
+    } catch (error) {
+      console.error('Failed to initialize Waline:', error)
+    }
+  })()
+</script>
+
+<style>
+  .waline-container {
+    margin: 2rem 0;
+  }
+
+  /* 明亮主题 */
+  :global(#waline) {
+    --waline-font-size: 16px;
+    --waline-white: var(--background);
+    --waline-light-grey: var(--muted);
+    --waline-dark-grey: var(--muted-foreground);
+
+    --waline-theme-color: var(--primary);
+    --waline-active-color: var(--primary);
+
+    --waline-color: var(--foreground);
+    --waline-bg-color: var(--background);
+    --waline-bg-color-light: var(--muted);
+    --waline-border-color: var(--border);
+    --waline-disable-bg-color: var(--muted);
+    --waline-disable-color: var(--muted-foreground);
+
+    --waline-avatar-size: 3.25rem;
+    --waline-m-avatar-size: calc(var(--waline-avatar-size) * 9 / 13);
+
+    --waline-border: 1px solid var(--waline-border-color);
+    --waline-avatar-radius: 50%;
+    --waline-box-shadow: none;
+
+    /* 输入框样式 */
+    --waline-bgcolor-light: var(--muted);
+    --waline-bgcolor-hover: var(--accent);
+    --waline-border-color: var(--border);
+    --waline-disable-bgcolor: var(--muted);
+    --waline-disable-color: var(--muted-foreground);
+
+    /* 特殊元素 */
+    --waline-code-bgcolor: var(--muted);
+    --waline-bq-color: var(--muted-foreground);
+
+    /* 选中文本 */
+    --waline-textarea-bgcolor: var(--background);
+    --waline-textarea-color: var(--foreground);
+  }
+
+  /* 暗色主题 */
+  :global(html.dark #waline) {
+    --waline-white: var(--background);
+    --waline-light-grey: var(--muted);
+    --waline-dark-grey: var(--muted-foreground);
+
+    /* 文本颜色 */
+    --waline-text-color: var(--foreground);
+    --waline-bgcolor: var(--background);
+    --waline-bgcolor-light: var(--muted);
+
+    /* 特殊元素 */
+    --waline-code-bgcolor: var(--muted);
+    --waline-bq-color: var(--muted-foreground);
+
+    /* 按钮 */
+    --waline-btn-color: var(--primary-foreground);
+    --waline-btn-bgcolor: var(--primary);
+    --waline-btn-bgcolor-hover: var(--primary);
+
+    /* 输入框 */
+    --waline-textarea-bgcolor: var(--muted);
+    --waline-textarea-color: var(--foreground);
+  }
+
+  /* 评论框动画 */
+  :global(.wl-panel) {
+    transition: all 0.15s ease;
+  }
+
+  /* 评论框焦点样式 */
+  :global(.wl-panel:focus-within) {
+    background: var(--background);
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+
+  /* 按钮悬停效果 */
+  :global(.wl-btn:hover) {
+    opacity: 0.8;
+  }
+
+  /* 头像悬停效果 */
+  :global(.wl-avatar) {
+    transition: transform 0.2s ease;
+  }
+
+  :global(.wl-avatar:hover) {
+    transform: scale(1.1);
+  }
+</style>

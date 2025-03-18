@@ -58,31 +58,10 @@ export const theme: ThemeUserConfig = {
   /** Configure the footer of your site. */
   footer: {
     registration: {
-      url: 'xx',
-      text: 'xx',
+      url: '#',  // 或者留空
+      text: '',  // 或者留空
     },
-    //   links: [
-    //     // Registration link
-    //     {
-    //       title: 'Moe ICP APTX4869',
-    //       link: 'https://icp.gov.moe/?keyword=APTX4869',
-    //       style: 'text-sm' // Uno/TW CSS class
-    //     },
-    //     {
-    //       title: 'Travelling',
-    //       link: 'https://www.travellings.cn/go.html',
-    //       style: 'text-sm'
-    //     },
-    //     // Privacy Policy link
-    //     {
-    //       title: 'Site Policy',
-    //       link: '/terms/list',
-    //       pos: 2 // position set to 2 will be appended to copyright line
-    //     }
-    //   ],
-    /** Enable displaying a “Astro & Pure theme powered” link in your site’s footer. */
     credits: true,
-    /** Optional details about the social media accounts for this site. */
     social: { github: 'https://github.com/catcodeme' }
   },
 
@@ -142,19 +121,17 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   waline: {
-    enable: false,
-    // Server service link
-    server: 'https://astro-theme-pure-waline.arthals.ink/',
-    // Refer https://waline.js.org/en/guide/features/emoji.html
-    emoji: ['bmoji', 'weibo'],
-    // Refer https://waline.js.org/en/reference/client/props.html
+    enable: true,
+    server: 'https://waline.8cat.life/',
+    emoji: ['bmoji','weibo'],
     additionalConfigs: {
-      // search: false,
+      reaction: false,
       pageview: true,
       comment: true,
+      placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)',
+      copyright: false,
       locale: {
-        reaction0: 'Like',
-        placeholder: 'Welcome to comment. (Email to receive replies. Login is unnecessary)'
+        placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)'
       },
       imageUploader: false
     }
