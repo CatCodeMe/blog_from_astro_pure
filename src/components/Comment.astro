@@ -7,8 +7,10 @@ const { waline } = config.integ
 
 // 构建完整的 emoji CDN 路径
 const emojiMaps = {
-  weibo: `${config.npmCDN}/@waline/emojis@1.2.0/weibo`
-  // 可以添加更多 emoji 包
+  weibo: `${config.npmCDN}/@waline/emojis@1.2.0/weibo`,
+  bilibili: `${config.npmCDN}/@waline/emojis@1.2.0/bilibili`,
+  qq: `${config.npmCDN}/@waline/emojis@1.2.0/qq`,
+  tieba: `${config.npmCDN}/@waline/emojis@1.2.0/tieba`
 }
 ---
 
@@ -36,14 +38,18 @@ const emojiMaps = {
         requestOptions: {
           credentials: 'include'
         },
-        // 正确构建 emoji 路径
-        emoji: walineConfig.emoji
-          ?.filter((name) => name in emojiMaps)
-          .map((name) => emojiMaps[name]),
+        login: 'optional', // 设置为可选登录
+        emoji: [
+          '//unpkg.com/@waline/emojis@1.2.0/weibo'
+          // '//unpkg.com/@waline/emojis@1.2.0/bilibili',
+          // '//unpkg.com/@waline/emojis@1.2.0/qq',
+          // '//unpkg.com/@waline/emojis@1.2.0/tieba'
+        ],
         dark: 'html.dark',
-        meta: ['nick', 'mail'],
-        requiredMeta: ['nick'],
+        meta: ['nick', 'mail'], // 设置必填项
+        requiredMeta: ['nick'], // 只要求昵称必填
         lang: 'zh-CN',
+        imageUploader: false, // 禁用图片上传
         ...walineConfig.additionalConfigs
       })
     } catch (error) {
@@ -80,21 +86,6 @@ const emojiMaps = {
     --waline-border: 1px solid var(--waline-border-color);
     --waline-avatar-radius: 50%;
     --waline-box-shadow: none;
-
-    /* 输入框样式 */
-    --waline-bgcolor-light: var(--muted);
-    --waline-bgcolor-hover: var(--accent);
-    --waline-border-color: var(--border);
-    --waline-disable-bgcolor: var(--muted);
-    --waline-disable-color: var(--muted-foreground);
-
-    /* 特殊元素 */
-    --waline-code-bgcolor: var(--muted);
-    --waline-bq-color: var(--muted-foreground);
-
-    /* 选中文本 */
-    --waline-textarea-bgcolor: var(--background);
-    --waline-textarea-color: var(--foreground);
   }
 
   /* 暗色主题 */
@@ -103,23 +94,13 @@ const emojiMaps = {
     --waline-light-grey: var(--muted);
     --waline-dark-grey: var(--muted-foreground);
 
-    /* 文本颜色 */
     --waline-text-color: var(--foreground);
     --waline-bgcolor: var(--background);
     --waline-bgcolor-light: var(--muted);
 
-    /* 特殊元素 */
-    --waline-code-bgcolor: var(--muted);
-    --waline-bq-color: var(--muted-foreground);
-
-    /* 按钮 */
-    --waline-btn-color: var(--primary-foreground);
-    --waline-btn-bgcolor: var(--primary);
-    --waline-btn-bgcolor-hover: var(--primary);
-
-    /* 输入框 */
-    --waline-textarea-bgcolor: var(--muted);
-    --waline-textarea-color: var(--foreground);
+    --waline-border-color: var(--border);
+    --waline-disable-bgcolor: var(--muted);
+    --waline-disable-color: var(--muted-foreground);
   }
 
   /* 评论框动画 */
