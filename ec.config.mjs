@@ -7,7 +7,7 @@ export default defineEcConfig({
   plugins: [
     pluginLineNumbers(),
     pluginCollapsibleSections(),
-    pluginLanguageBadge()
+    pluginLanguageBadge(),
   ],
   defaultProps: {
     collapseStyle: 'collapsible-auto',

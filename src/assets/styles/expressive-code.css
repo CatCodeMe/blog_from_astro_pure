@@ -23,7 +23,3 @@
                 }
         }
 }
-
-.expressive-code [data-language]::before {
-        background: hsl(var(--primary)) !important;
-}
