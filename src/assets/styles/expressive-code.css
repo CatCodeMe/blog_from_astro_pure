@@ -23,3 +23,8 @@
                 }
         }
 }
+
+.expressive-code .frame.has-title:not(.is-terminal) .title {
+        /* copy from expressive border css*/
+        border-bottom: var(--ec-brdWd) solid var(--ec-frm-edActTabBrdCol) !important;
+}
