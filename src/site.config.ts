@@ -1,4 +1,3 @@
-import { login } from '@waline/client'
 import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } from 'astro-pure/types'
 
 export const theme: ThemeUserConfig = {
@@ -122,12 +121,11 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   waline: {
-    enable: true,
+    enable: false,
     server: 'https://waline.8cat.life/',
     emoji: ['weibo'],
     additionalConfigs: {
       search: false,
-      login: 'optional',
       meta: ['nick', 'mail'],
       requiredMeta: ['nick'],
       imageUploader: false,

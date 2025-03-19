@@ -15,6 +15,6 @@ export default defineEcConfig({
   frames: {
     extractFileNameFromCode: true,
   },
-  themes: ['github-dark', 'github-light'],
+  themes: ['github-light'],
   removeUnusedThemes: true,
 })
