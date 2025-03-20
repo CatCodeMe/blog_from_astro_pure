@@ -15,6 +15,7 @@ export default defineEcConfig({
   frames: {
     extractFileNameFromCode: true,
   },
-  themes: ['github-light'],
+  themes: ['github-light','github-dark'],
   removeUnusedThemes: true,
+  // themeCssRoot: '#toggleDarkMode' //可以成功切换主题,但会导致页面效果错误
 })

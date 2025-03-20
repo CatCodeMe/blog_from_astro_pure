@@ -1,4 +1,5 @@
-import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } from 'astro-pure/types'
+import type { CardListData } from 'astro-pure/types'
+import type { ThemeUserConfig,Config,IntegrationUserConfig } from 'packages/pure/types'
 
 export const theme: ThemeUserConfig = {
   // === Basic configuration ===
@@ -57,10 +58,18 @@ export const theme: ThemeUserConfig = {
 
   /** Configure the footer of your site. */
   footer: {
-    registration: {
-      url: '#',  // 或者留空
-      text: '',  // 或者留空
-    },
+    links: [
+      // {
+      //   title: 'Moe ICP APTX4869',
+      //   link: 'https://icp.gov.moe/?keyword=APTX4869',
+      //   style: 'text-sm'
+      // },
+      {
+        title: 'Site Policy',
+        link: '/terms/list',
+        pos: 2
+      }
+    ],
     credits: true,
     social: { github: 'https://github.com/catcodeme' }
   },

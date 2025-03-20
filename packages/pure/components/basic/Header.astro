@@ -103,6 +103,17 @@ import { Icon } from '../user'
         const newTheme = setTheme(undefined, true)
         darkModeBtn.dataset.theme = newTheme
         showToast({ message: `Set theme to ${newTheme}` })
+
+        //强制设置expessive 主题颜色
+        const codeBlocks = document.querySelectorAll('.expressive-code')
+
+        let _ex_theme = newTheme
+        if (!newTheme || newTheme === 'system') {
+          _ex_theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        codeBlocks.forEach((block) => {
+          block.setAttribute('data-theme', _ex_theme === 'dark' ? 'github-dark' : 'github-light')
+        })
       })
 
       // Menu
