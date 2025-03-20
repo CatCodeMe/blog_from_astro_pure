@@ -7,6 +7,8 @@
   "compilerOptions": {
     // Basic
     "allowJs": true,
+    //允许解析 package.json
+    "resolveJsonModule": true,
     // Building for a library
     "declaration": true,
     // Code runs in the DOM
@@ -52,6 +54,10 @@
       ],
       "@/custom/pure/*": [
         "packages/pure/*"
+      ],
+      // 添加新的别名用于访问根目录文件
+      "@root/*": [
+        "./*"
       ]
     }
   },

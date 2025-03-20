@@ -1,4 +1,6 @@
 ---
+import pkg from '@root/package.json'
+import { Icon as DevIcon } from 'astro-icon/components'
 import config from 'virtual:config'
 
 import { Icon } from '../user'
@@ -14,6 +16,7 @@ social.rss = {
 }
 
 const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
+const version = pkg.version
 ---
 
 <footer class='mx-auto mb-5 mt-16'>
@@ -39,38 +42,50 @@ const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
         }
         {/* Position 2 */}
         <div>
-          {config.author}
-          @ {year}
+          Since {year}
           {
             footerConf.links && footerConf.links.length > 0 && (
-              <>
-                &
-                <span>
-                  {footerConf.links
-                    .filter(({ pos }) => pos === 2)
-                    .map(({ title, link, style }) => (
-                      <span>
-                        <a href={link} target='_blank' class={style}>
-                          {title}
-                        </a>
-                      </span>
-                    ))}
-                </span>
-              </>
+              <span>
+                {footerConf.links
+                  .filter(({ pos }) => pos === 2)
+                  .map(({ title, link, style }) => (
+                    <span>
+                      <a
+                        href={link}
+                        target='_blank'
+                        class:list={['underline underline-offset-4 hover:text-primary', style]}
+                      >
+                        {title}
+                      </a>
+                    </span>
+                  ))}
+              </span>
             )
           }
         </div>
         {
           footerConf.credits && (
-            <span class='inline-flex items-center'>
-              <a href='https://github.com/withastro/astro' target='_blank'>
-                {Astro.generator}
+            <span class='inline-flex items-center gap-x-2'>
+              <a
+                href='https://github.com/withastro/astro'
+                target='_blank'
+                class='inline-flex items-center gap-x-1 underline underline-offset-4 hover:text-primary'
+              >
+                {/* {Astro.generator}  */}
+                Astro <DevIcon name='devicon:astro' class='size-4' />
               </a>
-              {' & '}
-              <a href='https://github.com/cworld1/astro-theme-pure' target='_blank'>
-                Pure theme
+              <span>&</span>
+              <a
+                href='https://github.com/cworld1/astro-theme-pure'
+                target='_blank'
+                class='underline underline-offset-4 hover:text-primary'
+              >
+                Pure theme v{version}
               </a>
-              <Icon name='heart' class='inline-block m-.3rem size-1rem' /> powered
+              <span class='inline-flex items-center gap-x-1'>
+                <Icon name='heart' class='size-4' />
+                powered
+              </span>
             </span>
           )
         }

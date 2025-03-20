@@ -65,7 +65,7 @@ export const theme: ThemeUserConfig = {
       //   style: 'text-sm'
       // },
       {
-        title: 'Site Policy',
+        title: 'CC BY-NC-SA 4.0',
         link: '/terms/list',
         pos: 2
       }
