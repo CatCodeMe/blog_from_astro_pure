@@ -49,7 +49,7 @@ export const theme: ThemeUserConfig = {
   header: {
     menu: [
       { title: 'Blog', link: '/blog' },
-      { title: 'Docs', link: '/docs' },
+      // { title: 'Docs', link: '/docs' },
       { title: 'Projects', link: '/projects' },
       { title: 'Links', link: '/links' },
       { title: 'About', link: '/about' }
@@ -90,16 +90,16 @@ export const integ: IntegrationUserConfig = {
   links: {
     // Friend logbook
     logbook: [
-      { date: '2024-07-01', content: 'Lorem ipsum dolor sit amet.' },
-      { date: '2024-07-01', content: 'vidit suscipit at mei.' },
-      { date: '2024-07-01', content: 'Quem denique mea id.' }
+      // { date: '2024-07-01', content: 'Lorem ipsum dolor sit amet.' },
+      // { date: '2024-07-01', content: 'vidit suscipit at mei.' },
+      // { date: '2024-07-01', content: 'Quem denique mea id.' }
     ],
     // Yourself link info
     applyTip: [
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
-      { name: 'Link', val: 'https://astro-pure.js.org/' },
-      { name: 'Avatar', val: 'https://astro-pure.js.org/favicon/favicon.ico' }
+      { name: 'Link', val: 'https://8cat.life/' },
+      { name: 'Avatar', val: 'https://avatars.githubusercontent.com/u/11496772?v=4&size=64' }
     ]
   },
   // Enable page search function
