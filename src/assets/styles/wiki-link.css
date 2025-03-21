@@ -1,0 +1,18 @@
+.wiki-link {
+        /* 正常链接样式 */
+        color: var(--link-color);
+        text-decoration: none;
+}
+
+.draft-link {
+        /* 草稿链接样式 */
+        color: var(--draft-color);
+        text-decoration: underline dashed;
+}
+
+.broken-link {
+        /* 损坏链接样式 */
+        color: var(--error-color);
+        text-decoration: line-through;
+        cursor: not-allowed;
+}

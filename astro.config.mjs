@@ -15,26 +15,24 @@ import expressiveCode from 'astro-expressive-code'
 
 import icon from 'astro-icon'
 
+import remarkWikiLink from "@braindb/remark-wiki-link"
+import { brainDbAstro, getBrainDb } from "@braindb/astro"
+
+// 初始化 BrainDB
+const bdb = getBrainDb()
+await bdb.ready()
 
 // Local integrations
 import { outputCopier } from './src/plugins/output-copier.ts'
 // Local rehype & remark plugins
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
-// Shiki
-// import {
-//   addCopyButton,
-//   addLanguage,
-//   addTitle,
-//   transformerNotationDiff,
-//   transformerNotationHighlight,
-//   updateStyle
-// } from './src/plugins/shiki-transformers.ts'
+
 import config from './src/site.config.ts'
 
 // https://astro.build/config
 export default defineConfig({
   // Top-Level Options
-  site: 'https://astro-pure.js.org',
+  site: 'https://8cat.life',
   // base: '/docs',
   trailingSlash: 'never',
 
@@ -76,7 +74,20 @@ export default defineConfig({
     // static build method is not needed
     outputCopier({
       integ: ['sitemap', 'pagefind']
-    })
+    }),
+    brainDbAstro({
+      remarkWikiLink: false,
+      git: false,
+      root: 'src/content',
+      slug: (filePath) => {
+        let slug = filePath
+          .replace(/^src\/content\//, '')
+          .replace(/^\/+/, '')
+          .replace(/\.(md|mdx)$/, '')
+          .replace(/\/index$/, '')
+        return slug
+      }
+    }),
   ],
   // root: './my-project-directory',
 
@@ -88,7 +99,50 @@ export default defineConfig({
   },
   // Markdown Options
   markdown: {
-    remarkPlugins: [remarkMath,  remarkBreaks],
+    remarkPlugins: [
+      remarkMath,
+      [
+        remarkWikiLink,
+        {
+          linkTemplate: ({ slug, alias }) => {
+            let normalizedSlug = slug
+              .replace(/^\/+/, '')              // 移除开头的斜杠
+              .replace(/\.(md|mdx)$/, '')       // 移除文件扩展名
+              .replace(/\/index$/, '')          // 移除 index 结尾
+              .replace(/\/+$/, '')              // 移除结尾的斜杠
+              // .replace(/^(?!blog\/|docs\/)/, 'blog/')
+            
+            const doc = bdb.documentsSync().find(d => d.slug() === normalizedSlug)
+            
+            if (doc) {
+              return {
+                hName: "a",
+                hProperties: {
+                  href: `/${doc.slug()}`,
+                  class: "wiki-link",
+                },
+                hChildren: [
+                  {
+                    type: "text",
+                    value: alias ?? doc.frontmatter().title ?? normalizedSlug,
+                  },
+                ],
+              }
+            }
+            
+            return {
+              hName: "span",
+              hProperties: {
+                class: "broken-link",
+                title: `Can't resolve link to ${normalizedSlug}`,
+              },
+              hChildren: [{ type: "text", value: alias || normalizedSlug }],
+            }
+          },
+        },
+      ],
+      remarkBreaks
+    ],
     rehypePlugins: [
       [rehypeKatex, {}],
       rehypeHeadingIds,
@@ -106,21 +160,6 @@ export default defineConfig({
         }
       }]
     ],
-    // https://docs.astro.build/en/guides/syntax-highlighting/
-    // shikiConfig: {
-    //   themes: {
-    //     light: 'github-light',
-    //     dark: 'github-dark'
-    //   },
-    //   transformers: [
-    //     transformerNotationDiff(),
-    //     transformerNotationHighlight(),
-    //     updateStyle(),
-    //     addTitle(),
-    //     addLanguage(),
-    //     addCopyButton(2000)
-    //   ]
-    // }
   },
   experimental: {
     svg: true,

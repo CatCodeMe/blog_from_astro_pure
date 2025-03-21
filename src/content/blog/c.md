@@ -10,5 +10,5 @@ language: 'English'
 heroImage: { src: './markdown-zh/thumbnail.jpg', color: '#B4C6DA' }
 ---
 
-- 内部链接：[[blog/b|我引用 b]]
 
+[[blog/a|123]]
