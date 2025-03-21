@@ -106,10 +106,11 @@ export default defineConfig({
         {
           linkTemplate: ({ slug, alias }) => {
             let normalizedSlug = slug
+              .replace(/^src\/content\//, '')
               .replace(/^\/+/, '')              // 移除开头的斜杠
               .replace(/\.(md|mdx)$/, '')       // 移除文件扩展名
               .replace(/\/index$/, '')          // 移除 index 结尾
-              .replace(/\/+$/, '')              // 移除结尾的斜杠
+              // .replace(/\/+$/, '')              // 移除结尾的斜杠
               // .replace(/^(?!blog\/|docs\/)/, 'blog/')
             
             const doc = bdb.documentsSync().find(d => d.slug() === normalizedSlug)

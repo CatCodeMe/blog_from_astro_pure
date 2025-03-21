@@ -1,0 +1,524 @@
+---
+import Icon from '@/custom/pure/components/user/Icon.astro'
+---
+
+<div id='linkpreview' class='hidden'>
+  <div class='preview-header'>
+    <div class='preview-controls'>
+      <button class='preview-pin' title='Pin window'>
+        <Icon name='pin' class='pin-icon' />
+        <Icon name='pin-off' class='no-pin-icon hidden' />
+      </button>
+      <button class='preview-goto' title='Open in new tab'>
+        <Icon name='open-link-new-tab' />
+      </button>
+      <button class='preview-close hidden' title='Close'>
+        <Icon name='close' />
+      </button>
+    </div>
+  </div>
+  <div class='preview-content allow-interaction'></div>
+  <div class='resize-handle top-left'></div>
+  <div class='resize-handle top'></div>
+  <div class='resize-handle top-right'></div>
+  <div class='resize-handle right'></div>
+  <div class='resize-handle bottom-right'></div>
+  <div class='resize-handle bottom'></div>
+  <div class='resize-handle bottom-left'></div>
+  <div class='resize-handle left'></div>
+</div>
+
+<style>
+  #linkpreview {
+    position: fixed;
+    z-index: 999;
+    min-width: 200px;
+    min-height: 100px;
+    max-width: 800px;
+    max-height: 600px;
+    width: 500px;
+    height: 300px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid hsl(var(--primary) / 0.2);
+    border-radius: var(--radius);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    resize: both;
+  }
+
+  .preview-header {
+    padding: 0.5rem;
+    cursor: move;
+    background: hsl(var(--primary) / 0.1);
+    display: flex;
+    justify-content: flex-end;
+    user-select: none;
+  }
+
+  .preview-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .preview-controls button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: var(--radius);
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .preview-controls button:hover {
+    opacity: 1;
+    background: hsl(var(--primary) / 0.1);
+  }
+
+  .preview-pin.active .pin-icon {
+    display: none;
+  }
+
+  .preview-pin.active .no-pin-icon {
+    display: block;
+  }
+
+  .preview-pin.active ~ .preview-close {
+    display: flex;
+  }
+
+  .preview-content {
+    height: calc(100% - 2.5rem);
+    overflow: auto;
+    padding: 1rem;
+  }
+
+  .preview-content :global(a) {
+    pointer-events: none !important;
+  }
+
+  .preview-content.allow-interaction :global(a) {
+    pointer-events: auto !important;
+  }
+
+  /* 其他现有样式保持不变 */
+  :global(.dark) #linkpreview {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  #linkpreview.hidden {
+    display: none;
+  }
+
+  /* 滚动条样式 */
+  .preview-content::-webkit-scrollbar {
+    width: var(--scrollbar-width, 6px);
+  }
+
+  .preview-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .preview-content::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.2);
+    border-radius: var(--radius);
+  }
+
+  /* 添加调整大小的手柄样式 */
+  .resize-handle {
+    position: absolute;
+    background: transparent;
+  }
+
+  .resize-handle.top-left,
+  .resize-handle.top-right,
+  .resize-handle.bottom-left,
+  .resize-handle.bottom-right {
+    width: 10px;
+    height: 10px;
+    z-index: 2;
+  }
+
+  .resize-handle.top,
+  .resize-handle.bottom {
+    left: 10px;
+    right: 10px;
+    height: 5px;
+  }
+
+  .resize-handle.left,
+  .resize-handle.right {
+    top: 10px;
+    bottom: 10px;
+    width: 5px;
+  }
+
+  .resize-handle.top {
+    top: 0;
+    cursor: n-resize;
+  }
+  .resize-handle.right {
+    right: 0;
+    cursor: e-resize;
+  }
+  .resize-handle.bottom {
+    bottom: 0;
+    cursor: s-resize;
+  }
+  .resize-handle.left {
+    left: 0;
+    cursor: w-resize;
+  }
+
+  .resize-handle.top-left {
+    top: 0;
+    left: 0;
+    cursor: nw-resize;
+  }
+  .resize-handle.top-right {
+    top: 0;
+    right: 0;
+    cursor: ne-resize;
+  }
+  .resize-handle.bottom-left {
+    bottom: 0;
+    left: 0;
+    cursor: sw-resize;
+  }
+  .resize-handle.bottom-right {
+    bottom: 0;
+    right: 0;
+    cursor: se-resize;
+  }
+</style>
+
+<script>
+  import { autoPlacement, computePosition, offset } from '@floating-ui/dom'
+
+  class LinkPreview {
+    tooltip: HTMLElement
+    header: HTMLElement
+    content: HTMLElement
+    pinButton: HTMLElement
+    closeButton: HTMLElement
+    gotoButton: HTMLElement
+    currentHref: string = ''
+    showPreviewTimer?: NodeJS.Timeout
+    hidePreviewTimer?: NodeJS.Timeout
+    isPinned: boolean = false
+    isDragging: boolean = false
+    dragOffset = { x: 0, y: 0 }
+    isResizing: boolean = false
+    resizeDirection: string = ''
+    resizeHandles: HTMLElement[]
+
+    constructor() {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => this.initialize())
+      } else {
+        this.initialize()
+      }
+    }
+
+    initialize() {
+      this.tooltip = document.querySelector('#linkpreview') as HTMLElement
+      if (!this.tooltip) return
+
+      this.header = this.tooltip.querySelector('.preview-header') as HTMLElement
+      this.content = this.tooltip.querySelector('.preview-content') as HTMLElement
+      this.pinButton = this.tooltip.querySelector('.preview-pin') as HTMLElement
+      this.closeButton = this.tooltip.querySelector('.preview-close') as HTMLElement
+      this.gotoButton = this.tooltip.querySelector('.preview-goto') as HTMLElement
+      this.resizeHandles = Array.from(this.tooltip.querySelectorAll('.resize-handle'))
+
+      this.setupDragging()
+      this.setupResize()
+      this.setupControls()
+      this.bindEvents()
+
+      // 添加ESC键关闭
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !this.tooltip.classList.contains('hidden')) {
+          this.hidePreview()
+        }
+      })
+
+      // 添加点击外部关闭
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement
+        if (
+          !this.tooltip.contains(target) &&
+          !target.closest('a') &&
+          !this.tooltip.classList.contains('hidden')
+        ) {
+          this.hidePreview()
+        }
+      })
+    }
+
+    setupDragging() {
+      this.header.addEventListener('mousedown', (e) => {
+        // 如果点击的是控制按钮，不启动拖动
+        if ((e.target as HTMLElement).closest('.preview-controls')) return
+
+        this.isDragging = true
+        const rect = this.tooltip.getBoundingClientRect()
+        this.dragOffset = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        }
+      })
+
+      document.addEventListener('mousemove', (e) => {
+        if (!this.isDragging) return
+        const x = e.clientX - this.dragOffset.x
+        const y = e.clientY - this.dragOffset.y
+        this.tooltip.style.left = `${x}px`
+        this.tooltip.style.top = `${y}px`
+      })
+
+      document.addEventListener('mouseup', () => {
+        this.isDragging = false
+      })
+    }
+
+    setupControls() {
+      this.pinButton.addEventListener('click', (e) => {
+        e.stopPropagation()
+        this.isPinned = !this.isPinned
+        this.pinButton.classList.toggle('active')
+      })
+
+      this.closeButton.addEventListener('click', (e) => {
+        e.stopPropagation()
+        this.hidePreview(true) // 强制关闭，即使是pin状态
+      })
+
+      this.gotoButton.addEventListener('click', (e) => {
+        e.stopPropagation()
+        if (this.currentHref) {
+          window.open(this.currentHref, '_blank')
+        }
+      })
+    }
+
+    setupResize() {
+      this.resizeHandles.forEach((handle) => {
+        handle.addEventListener('mousedown', (e) => {
+          e.stopPropagation()
+          this.isResizing = true
+          this.resizeDirection = handle.className.split(' ')[1] // 获取方向类名
+
+          const rect = this.tooltip.getBoundingClientRect()
+          this.dragOffset = {
+            x: e.clientX,
+            y: e.clientY,
+            width: rect.width,
+            height: rect.height,
+            left: rect.left,
+            top: rect.top
+          }
+        })
+      })
+
+      document.addEventListener('mousemove', (e) => {
+        if (!this.isResizing) return
+
+        const dx = e.clientX - this.dragOffset.x
+        const dy = e.clientY - this.dragOffset.y
+
+        let newWidth = this.dragOffset.width
+        let newHeight = this.dragOffset.height
+        let newLeft = this.dragOffset.left
+        let newTop = this.dragOffset.top
+
+        // 根据调整方向更新尺寸和位置
+        if (this.resizeDirection.includes('right')) {
+          newWidth += dx
+        }
+        if (this.resizeDirection.includes('bottom')) {
+          newHeight += dy
+        }
+        if (this.resizeDirection.includes('left')) {
+          newWidth -= dx
+          newLeft += dx
+        }
+        if (this.resizeDirection.includes('top')) {
+          newHeight -= dy
+          newTop += dy
+        }
+
+        // 应用最小/最大尺寸限制
+        newWidth = Math.min(Math.max(200, newWidth), 800)
+        newHeight = Math.min(Math.max(100, newHeight), 600)
+
+        this.tooltip.style.width = `${newWidth}px`
+        this.tooltip.style.height = `${newHeight}px`
+        this.tooltip.style.left = `${newLeft}px`
+        this.tooltip.style.top = `${newTop}px`
+      })
+
+      document.addEventListener('mouseup', () => {
+        this.isResizing = false
+      })
+    }
+
+    // 判断鼠标是否在预览窗口的扩展区域内
+    isMouseInExtendedArea(e: MouseEvent): boolean {
+      if (!this.tooltip) return false
+
+      const rect = this.tooltip.getBoundingClientRect()
+      const buffer = 20 // 扩展判定区域（像素）
+
+      return (
+        e.clientX >= rect.left - buffer &&
+        e.clientX <= rect.right + buffer &&
+        e.clientY >= rect.top - buffer &&
+        e.clientY <= rect.bottom + buffer
+      )
+    }
+
+    bindEvents() {
+      // 监听文档上的链接悬停
+      document.addEventListener('mouseover', (e) => {
+        const target = e.target as HTMLElement
+        // 如果鼠标在预览窗口内或正在拖动/调整大小，不触发新的预览
+        if (this.tooltip.contains(target) || this.isDragging || this.isResizing) return
+        // 如果是链接，显示预览
+        if (target.closest('a')) {
+          this.showLinkPreview(e)
+        }
+      })
+
+      // 监听文档上的鼠标移出
+      document.addEventListener('mouseout', (e) => {
+        const target = e.target as HTMLElement
+        const relatedTarget = e.relatedTarget as HTMLElement
+
+        // 如果正在拖动或调整大小，不隐藏
+        if (this.isDragging || this.isResizing) return
+
+        // 如果鼠标从链接移出，但在预览窗口扩展区域内，则不隐藏
+        if (this.isMouseInExtendedArea(e)) return
+
+        // 如果鼠标从预览窗口移出，且没有移到链接上，则隐藏
+        if (this.tooltip.contains(target) && !relatedTarget?.closest('a')) {
+          // 检查是否移动到扩展区域内
+          if (!this.isMouseInExtendedArea(e)) {
+            this.hideLinkPreview()
+          }
+          return
+        }
+
+        // 如果从链接移出且没有移到预览窗口扩展区域内，且窗口未固定，则隐藏
+        if (target.closest('a') && !this.isMouseInExtendedArea(e) && !this.isPinned) {
+          this.hideLinkPreview()
+        }
+      })
+
+      // 预览窗口自身的鼠标事件
+      this.tooltip.addEventListener('mouseover', () => {
+        this.clearTimers() // 清除任何待处理的隐藏定时器
+      })
+
+      this.tooltip.addEventListener('mouseout', (e) => {
+        // 如果正在拖动或调整大小，不处理
+        if (this.isDragging || this.isResizing) return
+
+        const relatedTarget = e.relatedTarget as HTMLElement
+        // 只有当鼠标真正离开预览窗口扩展区域，且窗口未固定时才隐藏
+        if (
+          !this.isMouseInExtendedArea(e) &&
+          !this.isPinned &&
+          !this.tooltip.contains(relatedTarget)
+        ) {
+          this.hideLinkPreview()
+        }
+      })
+    }
+
+    clearTimers() {
+      if (this.showPreviewTimer) clearTimeout(this.showPreviewTimer)
+      if (this.hidePreviewTimer) clearTimeout(this.hidePreviewTimer)
+    }
+
+    hidePreview(force = false) {
+      if (!force && (this.isDragging || this.isResizing)) return
+      if (!force && this.isPinned) return
+
+      this.tooltip.classList.add('hidden')
+      this.currentHref = ''
+      this.isPinned = false
+      this.pinButton.classList.remove('active')
+    }
+
+    hideLinkPreview() {
+      this.hidePreviewTimer = setTimeout(() => {
+        this.hidePreview()
+      }, 300)
+    }
+
+    async showLinkPreview(e: MouseEvent | FocusEvent) {
+      const target = e.target as HTMLElement
+      const link = target.closest('a') as HTMLAnchorElement
+      if (!link) return
+
+      const href = link.href
+      if (!href || href === this.currentHref) return
+
+      this.currentHref = href
+      this.clearTimers()
+
+      this.showPreviewTimer = setTimeout(async () => {
+        if (this.currentHref !== href) return
+
+        try {
+          const response = await fetch(href)
+          const html = await response.text()
+          const doc = new DOMParser().parseFromString(html, 'text/html')
+
+          const content = doc.querySelector('main')?.cloneNode(true) as HTMLElement
+          if (content) {
+            const removeSelectors = ['#sidebar']
+            removeSelectors.forEach((selector) => {
+              content.querySelectorAll(selector).forEach((el) => el.remove())
+            })
+
+            this.content.innerHTML = content.innerHTML
+            this.tooltip.classList.remove('hidden')
+
+            if (!this.isPinned) {
+              computePosition(target, this.tooltip, {
+                middleware: [
+                  offset(10),
+                  autoPlacement({
+                    allowedPlacements: ['top', 'bottom']
+                  })
+                ]
+              }).then(({ x, y }) => {
+                Object.assign(this.tooltip.style, {
+                  left: `${x}px`,
+                  top: `${y}px`
+                })
+              })
+            }
+          }
+        } catch (error) {
+          console.error('Failed to load preview:', error)
+          this.hidePreview()
+        }
+      }, 400)
+    }
+  }
+
+  new LinkPreview()
+</script>
