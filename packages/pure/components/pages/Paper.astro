@@ -3,10 +3,10 @@ import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
-import { cn } from '../../utils'
-import { Icon } from '../user'
+import { Icon } from 'astro-pure/user'
 
-// 获取所有论文相关的图片
+import { cn } from '../../utils'
+
 const images = import.meta.glob<{ default: ImageMetadata }>(
   '/src/content/blog/papers/**/*.{jpeg,jpg,png,gif}'
 )
@@ -16,16 +16,18 @@ type Paper = {
   data: {
     title: string
     publishDate: Date
-    journal: string
     doi?: string
+    isbn?: string
+    star?: number
     tags?: string[]
-    titleImage: {
+    titleImage?: {
       src: string
       alt?: string
       width?: number
       height?: number
     }
   }
+  index: number
 }
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
@@ -34,27 +36,43 @@ type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
 }
 
 const { as: Tag = 'div', paper, class: className } = Astro.props
-const { id, data } = paper
+const { id, data, index } = paper
 
-// 处理图片路径
-const imagePathPrefix = `/src/content/blog/papers/${id}/${data.titleImage.src.replace('./', '')}`
-const imagePath = images[imagePathPrefix]
-if (!imagePath) {
-  throw new Error(
-    `"${imagePathPrefix}" does not exist in glob: "src/content/blog/papers/**/*.{jpeg,jpg,png,gif}"`
-  )
+let imagePath = null
+if (data.titleImage) {
+  const imagePathPrefix = `/src/content/blog/papers/${id}/${data.titleImage.src.replace('./', '')}`
+  imagePath = images[imagePathPrefix]
+  if (!imagePath) {
+    throw new Error(
+      `"${imagePathPrefix}" does not exist in glob: "src/content/blog/papers/**/*.{jpeg,jpg,png,gif}"`
+    )
+  }
 }
+
+// 确保 star 值在 1-5 之间
+const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
 ---
 
 <Tag
   class={cn(
-    'group flex gap-6 p-6 rounded-xl transition-all duration-300',
+    'group flex gap-6 p-6 rounded-xl transition-all duration-300 relative',
     'bg-white dark:bg-zinc-900',
     'border border-zinc-100 dark:border-zinc-800',
     'hover:border-zinc-200 dark:hover:border-zinc-700',
     className
   )}
 >
+  {/* 右上角星级 */}
+  {
+    starCount > 0 && (
+      <div class='absolute top-4 right-4 flex gap-0.5 text-zinc-400'>
+        {Array.from({ length: starCount }).map(() => (
+          <Icon name='star' class='size-5' />
+        ))}
+      </div>
+    )
+  }
+
   {/* 左侧图片 */}
   {
     imagePath && (
@@ -73,44 +91,17 @@ if (!imagePath) {
   {/* 右侧内容 */}
   <div class='flex flex-col flex-1 min-w-0'>
     {/* 标题 */}
-    <h3 class='text-lg font-medium text-zinc-900 dark:text-zinc-100'>
+    <h3 class='text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-tight m-0'>
       {data.title}
     </h3>
 
-    {/* 期刊和年份 */}
+    {/* 元信息 */}
     <div class='mt-2 flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400'>
-      <span class='flex items-center gap-1.5'>
-        <Icon name='book' class='size-4' />
-        {data.journal}
-      </span>
+      {/* 发布日期 */}
       <span class='flex items-center gap-1.5'>
         <Icon name='calendar' class='size-4' />
         {new Date(data.publishDate).getFullYear()}
       </span>
-    </div>
-
-    {/* 副标题 */}
-    {
-      data.subtitle && (
-        <p class='mt-3 text-sm text-zinc-600 dark:text-zinc-300 line-clamp-2'>{data.subtitle}</p>
-      )
-    }
-
-    {/* 底部信息 */}
-    <div class='mt-auto pt-4 flex items-center justify-between'>
-      {/* Tags */}
-      {
-        data.tags && (
-          <div class='flex flex-wrap gap-2'>
-            {data.tags.map((tag: string) => (
-              <span class='px-2 py-1 text-xs rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'>
-                {tag}
-              </span>
-            ))}
-          </div>
-        )
-      }
-
       {/* DOI */}
       {
         data.doi && (
@@ -118,13 +109,47 @@ if (!imagePath) {
             href={`https://doi.org/${data.doi}`}
             target='_blank'
             rel='noopener noreferrer'
-            class='flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200'
+            class='flex items-center gap-1.5 hover:text-zinc-800 dark:hover:text-zinc-200'
           >
-            <Icon name='external-link' class='size-4' />
+            <Icon name='doi' class='size-4' />
             <span>DOI</span>
           </a>
         )
       }
+      {/* ISBN */}
+      {
+        data.isbn && (
+          <button
+            class='group/isbn flex items-center gap-1.5 hover:text-zinc-800 dark:hover:text-zinc-200'
+            onclick={`navigator.clipboard.writeText('${data.isbn}').then(() => {
+            document.dispatchEvent(new CustomEvent('toast', { 
+              detail: { message: 'ISBN copied to clipboard!' }
+            }))
+          })`}
+          >
+            <Icon name='book' class='size-4' />
+            <span class='flex items-center gap-1'>
+              ISBN:
+              <code class='font-mono text-xs px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 group-hover/isbn:bg-zinc-200 dark:group-hover/isbn:bg-zinc-700'>
+                {data.isbn}
+              </code>
+            </span>
+          </button>
+        )
+      }
     </div>
+
+    {/* 标签 */}
+    {
+      data.tags && (
+        <div class='mt-auto pt-4 flex flex-wrap gap-2'>
+          {data.tags.map((tag: string) => (
+            <span class='px-2 py-1 text-xs rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'>
+              {tag}
+            </span>
+          ))}
+        </div>
+      )
+    }
   </div>
 </Tag>
