@@ -15,7 +15,9 @@ type Paper = {
   id: string
   data: {
     title: string
+    subTitle?: string
     publishDate: string
+    citations?: number
     doi?: string
     isbn?: string
     star?: number
@@ -39,6 +41,7 @@ const { as: Tag = 'div', paper, class: className } = Astro.props
 const { id, data, index } = paper
 
 let imagePath = null
+let imageModule = null
 if (data.titleImage) {
   const imagePathPrefix = `/src/content/blog/papers/${id}/${data.titleImage.src.replace('./', '')}`
   imagePath = images[imagePathPrefix]
@@ -47,9 +50,10 @@ if (data.titleImage) {
       `"${imagePathPrefix}" does not exist in glob: "src/content/blog/papers/**/*.{jpeg,jpg,png,gif}"`
     )
   }
+  imageModule = await imagePath()
 }
 
-// 确保 star 值在 1-5 之间
+// 确保 star 值在 0-5 之间
 const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
 ---
 
@@ -59,6 +63,7 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     'bg-white dark:bg-zinc-900',
     'border border-zinc-100 dark:border-zinc-800',
     'hover:border-zinc-200 dark:hover:border-zinc-700',
+    'mb-6', // 添加底部间距
     className
   )}
 >
@@ -67,19 +72,25 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     typeof paper.index === 'number' && (
       <div
         class='absolute right-0 top-1/2 -translate-y-1/2 -translate-x-4 text-[180px] font-bold leading-none
-        text-zinc-900/[0.04] dark:text-zinc-100/[0.06] select-none pointer-events-none'
+      text-zinc-900/[0.04] dark:text-zinc-100/[0.06] select-none pointer-events-none'
       >
-        {paper.index}
+        {String(paper.index).padStart(2, '0')}
       </div>
     )
   }
 
-  {/* 右上角星级 */}
+  {/* Star 评分 - 右上角 */}
   {
     starCount > 0 && (
-      <div class='absolute top-4 right-4 flex gap-0.5 text-zinc-400 z-10'>
-        {Array.from({ length: starCount }).map(() => (
-          <Icon name='star' class='size-5' />
+      <div class='absolute top-4 right-4 flex gap-0.5 z-20'>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Icon
+            name='star'
+            class={cn(
+              'size-4',
+              i < starCount ? 'text-yellow-400' : 'text-zinc-200 dark:text-zinc-700'
+            )}
+          />
         ))}
       </div>
     )
@@ -87,14 +98,15 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
 
   {/* 左侧图片 */}
   {
-    imagePath && (
-      <div class='shrink-0 z-10'>
-        <Image
-          src={imagePath().then((mod) => mod.default)}
+    imageModule && (
+      <div class='relative shrink-0 z-10 self-stretch'>
+        <img
+          src={imageModule.default.src}
           alt={data.titleImage.alt || data.title}
-          class='w-32 h-32 object-cover rounded-lg'
-          width={data.titleImage.width || 400}
-          height={data.titleImage.height || 300}
+          class='w-32 h-full object-cover rounded-lg'
+          width='128'
+          height='128'
+          loading='lazy'
         />
       </div>
     )
@@ -102,30 +114,52 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
 
   {/* 右侧内容 */}
   <div class='flex flex-col flex-1 min-w-0 z-10'>
-    {/* 标题 */}
-    <h3 class='text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-tight m-0'>
-      {data.title}
-    </h3>
+    {/* 标题区域 */}
+    <div class='space-y-1'>
+      <h3 class='text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-tight m-0'>
+        {data.title}
+      </h3>
+      {
+        data.subTitle && (
+          <p class='text-sm text-zinc-600 dark:text-zinc-400 leading-normal m-0'>{data.subTitle}</p>
+        )
+      }
+    </div>
 
-    {/* 元信息 */}
+    {/* 元信息 - 发布日期和引用数 */}
     <div class='mt-2 flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400'>
-      {/* 发布日期 */}
       <span class='flex items-center gap-1.5'>
         <Icon name='calendar' class='size-4' />
         {new Date(data.publishDate).getFullYear()}
       </span>
+      {
+        data.citations !== undefined && (
+          <span class='flex items-center gap-1.5'>
+            <Icon name='citation' class='size-4' />
+            {data.citations.toLocaleString()} citations
+          </span>
+        )
+      }
+    </div>
+
+    {/* 元信息 - DOI 和 ISBN */}
+    <div class='mt-2 flex flex-wrap items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400'>
       {/* DOI */}
       {
         data.doi && (
-          <a
-            href={`https://doi.org/${data.doi}`}
-            target='_blank'
-            rel='noopener noreferrer'
-            class='flex items-center gap-1.5 hover:text-zinc-800 dark:hover:text-zinc-200'
+          <button
+            class='group/doi flex items-center gap-1.5 hover:text-zinc-800 dark:hover:text-zinc-200'
+            onclick={`navigator.clipboard.writeText('${data.doi}').then(() => {
+              document.dispatchEvent(new CustomEvent('toast', { 
+                detail: { message: 'DOI copied to clipboard!' }
+              }))
+            })`}
           >
             <Icon name='doi' class='size-4' />
-            <span>DOI</span>
-          </a>
+            <code class='font-mono text-xs px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 group-hover/doi:bg-zinc-200 dark:group-hover/doi:bg-zinc-700'>
+              {data.doi}
+            </code>
+          </button>
         )
       }
       {/* ISBN */}
@@ -134,10 +168,10 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
           <button
             class='group/isbn flex items-center gap-1.5 hover:text-zinc-800 dark:hover:text-zinc-200'
             onclick={`navigator.clipboard.writeText('${data.isbn}').then(() => {
-            document.dispatchEvent(new CustomEvent('toast', { 
-              detail: { message: 'ISBN copied to clipboard!' }
-            }))
-          })`}
+              document.dispatchEvent(new CustomEvent('toast', { 
+                detail: { message: 'ISBN copied to clipboard!' }
+              }))
+            })`}
           >
             <Icon name='book' class='size-4' />
             <span class='flex items-center gap-1'>
@@ -165,3 +199,9 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     }
   </div>
 </Tag>
+
+<style>
+  .shrink-0 {
+    width: 8rem;
+  }
+</style>

@@ -14,10 +14,13 @@ import Paper from '@/custom/components/pages/Paper.astro'
 <Paper paper={{
   id: 'attention-is-all-you-need',
   data: {
-    title: 'Attention Is All You Need Attention Is All You NeedAttention Is All You NeedAttention Is All You NeedAttention Is All You NeedAttention Is All You Need',
+    title: 'Attention Is All You Need Attention  You NeedAttention Is ',
+    subTitle: 'xxxxxxx',
     publishDate: '2017-12-06',
     journal: 'NeurIPS 2017',
-    doi: '10.48550/arXiv.1706.03762',
+    doi: '10.1080/10286632.2013.832233',
+    isbn: '123-4123-1525-5123',
+    citations: 123456,
     star: 6,
     titleImage: {
       src: './paper.png',
@@ -28,6 +31,43 @@ import Paper from '@/custom/components/pages/Paper.astro'
   },
   index: 99
 }} />
+
+> [!note] Change $\alpha_k$ adaptively
+> One way to increase the performance of our model is to let the optimizer change $\alpha_k$ adaptively.
+
+<Paper paper={{
+  id: 'attention-is-all-you-need',
+  data: {
+    title: 'Attention Is All You Need',
+    subTitle: 'Introducing the Transformer architecture',
+    publishDate: '2017-12-06',
+    citations: 123456,  // 会显示为 "123,456 citations"
+    doi: '10.1080/10286632.2013.832233',
+    // ... 其他属性
+  }
+}} />
+
+<Paper paper={{
+  id: 'attention-is-all-you-need',
+  data: {
+    title: 'Attention Is All You Need Attention  You NeedAttention Is ',
+    subTitle: 'xxxxxxx',
+    publishDate: '2017-12-06',
+    journal: 'NeurIPS 2017',
+    doi: '10.1080/10286632.2013.832233',
+    isbn: '123-4123-1525-5123',
+    star: 6,
+    titleImage: {
+      src: './paper.png',
+      alt: 'Attention Is All You Need Paper'
+    },
+    tags: ['Transformer', 'Attention Mechanism', 'Neural Networks Neural Networks Neural Networks Neural Networks Neural Networks',]
+  },
+  index: 1002
+}} />
+
+> [!note] ##### The *Euler* formula: $e^{i \pi} + 1 = 0$
+> As we know, the Euler formula is ...
 
 ## 核心创新点
 
