@@ -22,6 +22,16 @@ import { brainDbAstro, getBrainDb } from "@braindb/astro"
 const bdb = getBrainDb()
 await bdb.ready()
 
+// 添加调试日志
+console.log('BrainDB initialized with documents:', {
+  total: bdb.documentsSync().length,
+  paths: bdb.documentsSync().map(d => ({
+    path: d.path(),
+    slug: d.slug(),
+    // collection: d.collection()
+  }))
+})
+
 // Local integrations
 import { outputCopier } from './src/plugins/output-copier.ts'
 // Local rehype & remark plugins
@@ -79,12 +89,21 @@ export default defineConfig({
       remarkWikiLink: false,
       git: false,
       root: 'src/content',
-      slug: (filePath) => {
+      cache: true,
+      slug: (filePath, collection) => {
+        // 修复路径规范化
         let slug = filePath
+          .replace(/^\/\//, '')
           .replace(/^src\/content\//, '')
           .replace(/^\/+/, '')
           .replace(/\.(md|mdx)$/, '')
           .replace(/\/index$/, '')
+        
+        
+        console.log('Normalized slug:', { 
+          original: filePath, 
+          normalized: slug,
+        })
         return slug
       }
     }),
@@ -105,39 +124,27 @@ export default defineConfig({
         remarkWikiLink,
         {
           linkTemplate: ({ slug, alias }) => {
+            // 简化 slug 处理逻辑
             let normalizedSlug = slug
+              .replace(/^\/\//, '')
               .replace(/^src\/content\//, '')
-              .replace(/^\/+/, '')              // 移除开头的斜杠
-              .replace(/\.(md|mdx)$/, '')       // 移除文件扩展名
-              .replace(/\/index$/, '')          // 移除 index 结尾
-              // .replace(/\/+$/, '')              // 移除结尾的斜杠
-              // .replace(/^(?!blog\/|docs\/)/, 'blog/')
-            
-            const doc = bdb.documentsSync().find(d => d.slug() === normalizedSlug)
-            
-            if (doc) {
-              return {
-                hName: "a",
-                hProperties: {
-                  href: `/${doc.slug()}`,
-                  class: "wiki-link",
-                },
-                hChildren: [
-                  {
-                    type: "text",
-                    value: alias ?? doc.frontmatter().title ?? normalizedSlug,
-                  },
-                ],
-              }
-            }
-            
+              .replace(/^\/+/, '')
+              .replace(/\.(md|mdx)$/, '')
+              .replace(/\/index$/, '')
+
+            // 直接返回链接结构
             return {
-              hName: "span",
+              hName: "a",
               hProperties: {
-                class: "broken-link",
-                title: `Can't resolve link to ${normalizedSlug}`,
+                href: `/${normalizedSlug}`,
+                class: "wiki-link",
               },
-              hChildren: [{ type: "text", value: alias || normalizedSlug }],
+              hChildren: [
+                {
+                  type: "text",
+                  value: alias || normalizedSlug,
+                },
+              ],
             }
           },
         },
