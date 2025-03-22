@@ -22,15 +22,6 @@ import { brainDbAstro, getBrainDb } from "@braindb/astro"
 const bdb = getBrainDb()
 await bdb.ready()
 
-// 添加调试日志
-console.log('BrainDB initialized with documents:', {
-  total: bdb.documentsSync().length,
-  paths: bdb.documentsSync().map(d => ({
-    path: d.path(),
-    slug: d.slug(),
-    // collection: d.collection()
-  }))
-})
 
 // Local integrations
 import { outputCopier } from './src/plugins/output-copier.ts'
@@ -98,12 +89,6 @@ export default defineConfig({
           .replace(/^\/+/, '')
           .replace(/\.(md|mdx)$/, '')
           .replace(/\/index$/, '')
-        
-        
-        console.log('Normalized slug:', { 
-          original: filePath, 
-          normalized: slug,
-        })
         return slug
       }
     }),
@@ -124,7 +109,6 @@ export default defineConfig({
         remarkWikiLink,
         {
           linkTemplate: ({ slug, alias }) => {
-            // 简化 slug 处理逻辑
             let normalizedSlug = slug
               .replace(/^\/\//, '')
               .replace(/^src\/content\//, '')
@@ -132,12 +116,11 @@ export default defineConfig({
               .replace(/\.(md|mdx)$/, '')
               .replace(/\/index$/, '')
 
-            // 直接返回链接结构
             return {
               hName: "a",
               hProperties: {
                 href: `/${normalizedSlug}`,
-                class: "wiki-link",
+                class: "internal-link",
               },
               hChildren: [
                 {

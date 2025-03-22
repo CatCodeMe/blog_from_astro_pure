@@ -4,6 +4,7 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
 
 <div id='linkpreview' class='hidden'>
   <div class='preview-header'>
+    <div class='preview-title'></div>
     <div class='preview-controls'>
       <button class='preview-pin' title='Pin window'>
         <Icon name='pin' class='pin-icon' />
@@ -50,18 +51,45 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
     resize: both;
   }
 
+  /* 在小屏幕上完全禁用预览功能 */
+  @media (max-width: 768px) {
+    #linkpreview {
+      display: none !important; /* 使用 !important 确保覆盖其他显示规则 */
+    }
+
+    /* 禁用所有预览相关的交互效果 */
+    .preview-header,
+    .preview-controls,
+    .resize-handle {
+      display: none !important;
+    }
+  }
+
   .preview-header {
-    padding: 0.5rem;
-    cursor: move;
-    background: hsl(var(--primary) / 0.1);
     display: flex;
-    justify-content: flex-end;
-    user-select: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid hsl(var(--border));
+    background-color: hsl(var(--muted));
+  }
+
+  .preview-title {
+    font-size: 1rem;
+    color: hsl(var(--foreground));
+    font-weight: 500;
+    text-align: left;
+    flex-grow: 1;
+    margin-right: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .preview-controls {
     display: flex;
     gap: 0.5rem;
+    flex-shrink: 0;
   }
 
   .preview-controls button {
@@ -92,6 +120,10 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
     display: block;
   }
 
+  .preview-close {
+    display: none;
+  }
+
   .preview-pin.active ~ .preview-close {
     display: flex;
   }
@@ -112,7 +144,7 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
 
   /* 其他现有样式保持不变 */
   :global(.dark) #linkpreview {
-    background: rgba(0, 0, 0, 0.8);
+    background: hsl(var(--primary) / 0.1);
   }
 
   #linkpreview.hidden {
@@ -220,8 +252,14 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
     isResizing: boolean = false
     resizeDirection: string = ''
     resizeHandles: HTMLElement[]
+    titleElement: HTMLElement
 
     constructor() {
+      // 添加设备检查
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        return // 在小屏幕上直接退出初始化
+      }
+
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => this.initialize())
       } else {
@@ -239,6 +277,7 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
       this.closeButton = this.tooltip.querySelector('.preview-close') as HTMLElement
       this.gotoButton = this.tooltip.querySelector('.preview-goto') as HTMLElement
       this.resizeHandles = Array.from(this.tooltip.querySelectorAll('.resize-handle'))
+      this.titleElement = this.tooltip.querySelector('.preview-title') as HTMLElement
 
       this.setupDragging()
       this.setupResize()
@@ -388,13 +427,15 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
     }
 
     bindEvents() {
-      // 监听文档上的链接悬停
       document.addEventListener('mouseover', (e) => {
         const target = e.target as HTMLElement
-        // 如果鼠标在预览窗口内或正在拖动/调整大小，不触发新的预览
         if (this.tooltip.contains(target) || this.isDragging || this.isResizing) return
-        // 如果是链接，显示预览
-        if (target.closest('a')) {
+
+        const link = target.closest('a')
+        const isInArticle = target.closest('article')
+
+        // 简化判断逻辑：只要不是外部链接（没有 external-link 类）就显示预览
+        if (link && isInArticle && !link.classList.contains('external-link')) {
           this.showLinkPreview(e)
         }
       })
@@ -459,6 +500,7 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
       this.currentHref = ''
       this.isPinned = false
       this.pinButton.classList.remove('active')
+      this.titleElement.textContent = '' // 清除标题
     }
 
     hideLinkPreview() {
@@ -475,6 +517,12 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
       const href = link.href
       if (!href || href === this.currentHref) return
 
+      const linkText =
+        link.textContent?.trim() ||
+        link.getAttribute('title') ||
+        decodeURIComponent(href.split('/').pop() || '')
+      this.titleElement.textContent = linkText
+
       this.currentHref = href
       this.clearTimers()
 
@@ -482,12 +530,17 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
         if (this.currentHref !== href) return
 
         try {
+          // 检查是否是外部链接
+          const isExternalLink = !href.startsWith(window.location.origin) && !href.startsWith('/')
+          if (isExternalLink) return
+
           const response = await fetch(href)
           const html = await response.text()
           const doc = new DOMParser().parseFromString(html, 'text/html')
 
           const content = doc.querySelector('main')?.cloneNode(true) as HTMLElement
           if (content) {
+            // 清理内容
             const removeSelectors = ['#sidebar']
             removeSelectors.forEach((selector) => {
               content.querySelectorAll(selector).forEach((el) => el.remove())
@@ -514,7 +567,6 @@ import Icon from '@/custom/pure/components/user/Icon.astro'
           }
         } catch (error) {
           console.error('Failed to load preview:', error)
-          this.hidePreview()
         }
       }, 400)
     }

@@ -51,9 +51,18 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
         rehypePlugins.push([
           rehypeExternalLinks,
           {
-            content: { type: 'text', value: userConfig.content.externalLinksContent },
+            content: { 
+              type: 'text', 
+              value: userConfig.content.externalLinksContent 
+            },
+            contentProperties: {
+              className: ['external-link-icon']
+            },
+            properties: {
+              className: ['external-link']
+            },
             target: '_blank',
-            rel: ['nofollow', 'noopener', 'noreferrer']
+            rel: ['nofollow', 'noopener', 'noreferrer'],
           }
         ])
         // Add Starlight directives restoration integration at the end of the list so that remark

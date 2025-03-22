@@ -8,6 +8,14 @@ heroImage: { src: './thumbnail.jpg', color: '#B4C6DA' }
 language: '中文'
 ---
 
+- 内部链接：[[blog/b|xxwqre]]
+- 内部链接：[[blog/x|not found]]
+ - 同 1 个文件夹： [[blog/c]]
+  blog 下不同子文件夹同名： [[blog/markdown/index|en md]]
+  blog 下不同子文件夹同名： [[blog/markdown-zh/index|zh md]]
+
+  [[docs/advanced/faq]]
+
 ## 基本语法
 
 Markdown 是一种轻量级且易于使用的语法，用于为您的写作设计风格。
