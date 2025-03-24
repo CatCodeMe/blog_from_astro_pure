@@ -16,28 +16,6 @@
       ?.setAttribute('content', theme === 'dark' ? '#0B0B10' : '#FCFCFD')
   }
 
-  // // 监听 .expressive-code 元素的创建
-  // const observer = new MutationObserver((mutations) => {
-  //   mutations.forEach((mutation) => {
-  //     mutation.addedNodes.forEach((node) => {
-  //       if (node.nodeType === 1 && (node as Element).matches('.expressive-code')) {
-  //         const theme = localStorage.getItem('theme')
-  //         const isDark =
-  //           !theme || theme === 'system'
-  //             ? window.matchMedia('(prefers-color-scheme: dark)').matches
-  //             : theme === 'dark'
-  //         ;(node as Element).setAttribute('data-theme', isDark ? 'github-dark' : 'github-light')
-  //       }
-  //     })
-  //   })
-  // })
-
-  // 开始监听
-  // observer.observe(document.body, {
-  //   childList: true,
-  //   subtree: true
-  // })
-
   simpleSetTheme()
   document.addEventListener('astro:page-load', () => simpleSetTheme())
 </script>
