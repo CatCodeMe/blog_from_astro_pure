@@ -14,6 +14,13 @@ heroImage: { src: './markdown-zh/thumbnail.jpg', color: '#B4C6DA' }
 [[blog/a|123]]
 
 ```mermaid
+flowchart TD
+    Start --> Stop
+
+```
+
+
+```mermaid
 ---
 config:
   sankey:

@@ -1,0 +1,77 @@
+---
+import config from 'virtual:config'
+---
+
+<script is:inline src={`${config.npmCDN}/mermaid/dist/mermaid.min.js`}></script>
+<script is:inline>
+  async function initializeMermaid() {
+    const theme = document.documentElement.dataset.theme
+    const isDark =
+      theme === 'system'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+        : theme === 'dark'
+
+    await mermaid.initialize({
+      startOnLoad: false,
+      theme: isDark ? 'dark' : 'default'
+    })
+  }
+
+  async function renderMermaidDiagrams() {
+    const diagrams = document.querySelectorAll('pre.mermaid')
+    for (const element of diagrams) {
+      try {
+        // 如果已经渲染过，先移除旧的内容
+        if (element.hasAttribute('data-processed')) {
+          const encodedContent = element.getAttribute('data-original')
+          if (encodedContent) {
+            // 解码 base64 内容
+            const originalContent = decodeURIComponent(atob(encodedContent))
+            element.textContent = originalContent
+            element.removeAttribute('data-processed')
+          }
+        } else {
+          // 第一次渲染，保存原始内容（base64编码）
+          const content = element.textContent || ''
+          const encodedContent = btoa(encodeURIComponent(content))
+          element.setAttribute('data-original', encodedContent)
+        }
+
+        await mermaid.run({
+          nodes: [element]
+        })
+      } catch (error) {
+        console.error('Mermaid rendering error:', error)
+      }
+    }
+  }
+
+  // 初始化并首次渲染
+  ;(async () => {
+    await initializeMermaid()
+    await renderMermaidDiagrams()
+  })()
+
+  // 监听主题切换
+  const observer = new MutationObserver(async (mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.attributeName === 'data-theme') {
+        await initializeMermaid()
+        await renderMermaidDiagrams()
+        break
+      }
+    }
+  })
+
+  observer.observe(document.documentElement, {
+    attributes: true
+  })
+
+  // 监听系统主题变化
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async (e) => {
+    if (document.documentElement.dataset.theme === 'system') {
+      await initializeMermaid()
+      await renderMermaidDiagrams()
+    }
+  })
+</script>

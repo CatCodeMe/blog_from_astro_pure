@@ -6,16 +6,17 @@ import AstroPureIntegration from './packages/pure/index.ts'
 import { defineConfig } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
+import remarkBreaks from 'remark-breaks'
+import remarkWikiLink from "@braindb/remark-wiki-link"
+import { remarkMermaid } from './src/plugins/remark-mermaid'
 
 // Others
 // import { visualizer } from 'rollup-plugin-visualizer'
 import rehypeCallouts from 'rehype-callouts'
-import remarkBreaks from 'remark-breaks'
 import expressiveCode from 'astro-expressive-code'
 
 import icon from 'astro-icon'
 
-import remarkWikiLink from "@braindb/remark-wiki-link"
 // import { brainDbAstro, getBrainDb } from "@braindb/astro"
 
 // // 初始化 BrainDB
@@ -91,34 +92,32 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [
       remarkMath,
-      [
-        remarkWikiLink,
-        {
-          linkTemplate: ({ slug, alias }) => {
-            let normalizedSlug = slug
-              .replace(/^\/\//, '')
-              .replace(/^src\/content\//, '')
-              .replace(/^\/+/, '')
-              .replace(/\.(md|mdx)$/, '')
-              .replace(/\/index$/, '')
+      [remarkWikiLink, {
+        linkTemplate: ({ slug, alias }) => {
+          let normalizedSlug = slug
+            .replace(/^\/\//, '')
+            .replace(/^src\/content\//, '')
+            .replace(/^\/+/, '')
+            .replace(/\.(md|mdx)$/, '')
+            .replace(/\/index$/, '')
 
-            return {
-              hName: "a",
-              hProperties: {
-                href: `/${normalizedSlug}`,
-                class: "internal-link",
+          return {
+            hName: "a",
+            hProperties: {
+              href: `/${normalizedSlug}`,
+              class: "internal-link",
+            },
+            hChildren: [
+              {
+                type: "text",
+                value: alias || normalizedSlug,
               },
-              hChildren: [
-                {
-                  type: "text",
-                  value: alias || normalizedSlug,
-                },
-              ],
-            }
-          },
+            ],
+          }
         },
-      ],
-      remarkBreaks
+      }],
+      remarkBreaks,
+      remarkMermaid
     ],
     rehypePlugins: [
       [rehypeKatex, {}],
