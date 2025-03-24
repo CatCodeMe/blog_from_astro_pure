@@ -1,5 +1,9 @@
 ---
+import { Image } from 'astro:assets'
 import config from 'virtual:config'
+
+// 直接导入图片
+import logoImage from '@/assets/avatar.jpg'
 
 import { Icon } from '../user'
 ---
@@ -7,16 +11,21 @@ import { Icon } from '../user'
 <header-component
   class='group sticky top-4 z-30 mb-12 flex items-center justify-between rounded-xl border border-transparent max-sm:py-1 sm:rounded-2xl [&.not-top]:border-border [&.not-top]:bg-background [&.not-top]:px-1.5 dark:[&.not-top]:bg-muted'
 >
-  <!-- <div
-      class='absolute -left-4 -top-8 -z-10 box-content hidden h-20 w-[calc(100%+2rem)] !duration-0 max-sm:group-[.expanded]:block max-sm:group-[.expanded.not-top]:hidden max-sm:group-[.expanded]:bg-white dark:max-sm:group-[.expanded]:bg-muted'
-    >
-    </div> -->
   <a
-    class='z-30 text-xl font-semibold group-[.not-top]:ms-2 sm:group-[.not-top]:ms-3'
+    class='z-30 flex items-center gap-x-2 text-xl font-semibold group-[.not-top]:ms-2 sm:group-[.not-top]:ms-3'
     style='transition:margin-inline 0.3s'
     href='/'
-    aria-label='Brand'>{config.title}</a
+    aria-label='Brand'
   >
+    <Image
+      src={logoImage}
+      width={24}
+      height={24}
+      alt='Site Logo'
+      class='size-9 object-cover rounded-full border border-border'
+    />
+    {config.title}
+  </a>
 
   <div class='flex items-center gap-x-2'>
     {/* Menu links */}

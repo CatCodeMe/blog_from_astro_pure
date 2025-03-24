@@ -9,7 +9,11 @@ tags:
 language: 'English'
 ---
 
-[bd](http://www.baidu.com)
+[bd](http://bilibili.com)
+[g](http://github.com)
+[x](http://x.com)
+[y](http://youtube.com)
+[a](http://acm.com)
 
 - 内部链接：[[blog/b|xxwqre]]
 - 内部链接：[[blog/x|not found]]
@@ -20,9 +24,69 @@ language: 'English'
   [[docs/advanced/faq]]
 
 
-import Card3D from '@/components/Card3D.astro';
-import Card3DDesk from '@/components/Card3DDesk.astro';
+
+>[!note] 11
+> 123
+>>[!note] 22 
+>> 1
+>
+> > 2
+
+
+> [!NOTE] group1
+> before
+> > [!NOTE] group2
+> > g2_content_lin1
+> > > g2_content_lin2
+> 
+> > after
+
+
+> [!NOTE] group1
+> before
+>
+> > [!TIP] group2
+> > g2_content_lin1
+> > > g2_content_lin2
+>
+> > > [!NOTE] group3
+> > > >  444
+>
+> after
+> 123123
+> 456
+
+
+> 呵呵呵呵
+> > 呵呵呵呵
+ 
+> 123
 
 
 
+> [!NOTE] group1
+> before
+>
+> > [!NOTE] group2
+> > g2_content_lin1
+> > > g2_content_lin2
+>
+> > > [!NOTE] group3
+> > > > 444
+>
+> after
+
+
+
+> [!NOTE] group1
+> before
+>
+> > [!NOTE] group2
+> > g2_content_lin1
+> > > g2_content_lin2
+> > 
+> > > [!NOTE] group3
+> > > > 444
+>
+> after
 

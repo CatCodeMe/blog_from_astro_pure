@@ -4693,11 +4693,10 @@ limitations under the License.
                                 return this.activeModesCondition();
                         }
 
-                        refresh() {
                                 this.hide();
-                                this.unselect();
-                                if (this.showCondition()) this.show();
-                                if (this.isActive()) this.select();
+                this.unselect();
+                if (this.showCondition()) this.show();
+                if (this.isActive()) this.select();
                         }
                 }
 
