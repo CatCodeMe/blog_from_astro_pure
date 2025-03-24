@@ -1,0 +1,345 @@
+/* 默认状态下显示 wrapper 边框 */
+.mermaid-wrapper {
+  position: relative;
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+  overflow: visible;
+  /* 改为 visible 让复制提示可以显示在外部 */
+  border: 1px solid hsl(var(--border));
+  /* background: hsl(var(--muted)/30); */
+}
+
+.mermaid-container {
+  padding: 1rem;
+  overflow: auto;
+  border: none;
+}
+
+.mermaid {
+  margin: 0 auto;
+}
+
+/* 右上角操作按钮组 */
+.mermaid-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.mermaid-wrapper:hover .mermaid-actions {
+  opacity: 1;
+}
+
+/* 操作按钮基础样式 */
+.mermaid-action-btn {
+  position: relative;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mermaid-action-btn:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--accent));
+}
+
+/* 复制按钮状态 */
+.mermaid-action-btn .success {
+  display: none;
+}
+
+.mermaid-action-btn.copied .success {
+  display: block;
+}
+
+.mermaid-action-btn.copied .ready {
+  display: none;
+}
+
+/* 复制成功提示 - 调整层级确保显示在最上层 */
+.mermaid-action-btn.copied::after {
+  content: 'Copied!';
+  position: absolute;
+  left: calc(100% + 0.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  border: 1px solid hsl(var(--border));
+  animation: mermaid-fade-in 0.2s ease-in-out;
+  z-index: 10;
+  /* 添加 z-index 确保显示在上层 */
+}
+
+/* 动画效果 */
+@keyframes mermaid-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+/* 弹窗样式 */
+.mermaid-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: none;
+}
+
+.mermaid-modal.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 弹窗内容区域 */
+.mermaid-modal-content {
+  position: relative;
+  background: hsl(var(--background));
+  padding: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  width: 90%;
+  height: 80vh;
+  overflow: hidden;
+}
+
+/* 弹窗中的容器添加虚线边框 */
+.mermaid-modal .mermaid-container {
+  width: 100%;
+  height: 100%;
+  /* border: 1px dashed hsl(var(--border)); */
+  overflow: hidden;
+  cursor: grab;
+  padding-bottom: 1.5rem;
+  /* 为底部按钮留出空间 */
+}
+
+.mermaid-modal .mermaid {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: center;
+  transform: translate(-50%, -50%) scale(1);
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* 移除边界相关的样式 */
+.mermaid-modal .mermaid-container.at-boundary {
+  border-color: transparent;
+}
+
+/* 默认视图下的品牌文字样式 */
+.mermaid-wrapper .mermaid-brand {
+  position: absolute;
+  right: 0;
+  bottom: 1rem;
+  font-size: 3rem;
+  color: hsl(var(--muted-foreground) / 0.1);
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+
+/* 弹窗中的品牌文字样式 */
+.mermaid-modal .mermaid-brand {
+  position: absolute;
+  right: 2rem;
+  bottom: 5rem;
+  font-size: 8rem;
+  color: hsl(var(--muted-foreground) / 0.1);
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+
+/* 移除品牌图标 */
+.mermaid-brand svg {
+  display: none;
+}
+
+/* 复制按钮样式 */
+.control-btn.copy-btn,
+.mermaid-action-btn {
+  position: relative;
+}
+
+.control-btn.copy-btn .success,
+.mermaid-action-btn .success {
+  display: none;
+}
+
+.control-btn.copy-btn.copied .success,
+.mermaid-action-btn.copied .success {
+  display: block;
+}
+
+.control-btn.copy-btn.copied .ready,
+.mermaid-action-btn.copied .ready {
+  display: none;
+}
+
+/* 移除复制按钮的 tooltip */
+.control-btn.copy-btn.copied::after,
+.mermaid-action-btn.copied::after {
+  display: none;
+}
+
+/* 复制按钮状态 - 使用内联文本替代 tooltip */
+.control-btn.copy-btn .text,
+.mermaid-action-btn .text {
+  margin-left: 0.5rem;
+}
+
+/* 控制按钮容器 */
+.mermaid-controls {
+  position: absolute;
+  bottom: -1rem;
+  /* 让按钮容器底部超出 modal 内容区域 */
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+}
+
+/* 控制按钮组 */
+.mermaid-control-group {
+  display: flex;
+  gap: 0.25rem;
+}
+
+/* 分隔不同功能的按钮组 */
+.mermaid-control-group+.mermaid-control-group {
+  margin-left: 0.25rem;
+  padding-left: 0.25rem;
+}
+
+/* 控制按钮基础样式 */
+.mermaid-modal .control-btn {
+  width: 2rem;
+  /* 减小按钮尺寸 */
+  height: 2rem;
+  padding: 0.375rem;
+  border-radius: 0.25rem;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 控制按钮悬停状态 */
+.mermaid-modal .control-btn:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+/* 控制按钮图标样式 */
+.mermaid-modal .control-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 复制按钮状态 */
+.mermaid-copy-btn .mermaid-copy-success {
+  display: none;
+}
+
+.mermaid-copy-btn.copied .mermaid-copy-success {
+  display: block;
+}
+
+.mermaid-copy-btn.copied .mermaid-copy-ready {
+  display: none;
+}
+
+/* 复制成功提示 */
+.mermaid-copy-btn.copied::after {
+  content: 'Copied!';
+  position: absolute;
+  left: calc(100% + 0.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  border: 1px solid hsl(var(--border));
+  animation: mermaid-fade-in 0.2s ease-in-out;
+}
+
+/* 动画效果 */
+@keyframes mermaid-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+/* 调整弹窗内容区域，为底部按钮留出空间 */
+.mermaid-modal-content {
+  padding-bottom: 4.5rem;
+  /* 确保内容不被底部按钮遮挡 */
+}
+
+
+
+/* 复制按钮成功状态提示 */
+.mermaid-modal .control-btn.copy-btn.copied::after {
+  content: 'Copied!';
+  position: absolute;
+  left: 50%;
+  top: -2rem;
+  transform: translateX(-50%);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  border: 1px solid hsl(var(--border));
+}

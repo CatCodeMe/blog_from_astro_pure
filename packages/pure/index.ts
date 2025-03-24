@@ -10,6 +10,7 @@ import rehypeExternalLinks from 'rehype-external-links'
 import UnoCSS from 'unocss/astro'
 
 import { remarkAddZoomable, remarkReadingTime } from './plugins/remark-plugins'
+import { remarkMermaid } from './plugins/remark-mermaid'
 import { vitePluginUserConfig } from './plugins/virtual-user-config'
 import { UserConfigSchema, type UserInputConfig } from './types/user-config'
 import { parseWithFriendlyErrors } from './utils/error-map'
@@ -23,14 +24,12 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
     hooks: {
       'astro:config:setup': async ({ config, updateConfig }) => {
         let userConfig = parseWithFriendlyErrors(
-          // @ts-ignore
           UserConfigSchema,
           opts,
           'Invalid config passed to astro-pure integration'
         )
 
-        // Add built-in integrations only if they are not already added by the user through the
-        // config or by a plugin.
+        // Add built-in integrations
         const allIntegrations = [...config.integrations, ...integrations]
         if (!allIntegrations.find(({ name }) => name === '@astrojs/sitemap')) {
           integrations.push(sitemap())
@@ -42,7 +41,8 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
           integrations.push(UnoCSS({ injectReset: true }))
         }
 
-        // Add supported remark plugins based on user config.
+        // Add remark plugins
+        remarkPlugins.push(remarkMermaid) // 添加 mermaid 插件
         if (userConfig.integ.mediumZoom.enable)
           remarkPlugins.push([remarkAddZoomable, userConfig.integ.mediumZoom.options])
         remarkPlugins.push(remarkReadingTime)
