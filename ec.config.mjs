@@ -17,4 +17,5 @@ export default defineEcConfig({
   },
   themes: ['github-light','github-dark'],
   removeUnusedThemes: true,
+  themeCssSelector: (theme) => `[data-theme='${theme.type}']`
 })
