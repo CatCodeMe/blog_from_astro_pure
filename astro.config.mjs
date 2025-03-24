@@ -16,15 +16,14 @@ import expressiveCode from 'astro-expressive-code'
 import icon from 'astro-icon'
 
 import remarkWikiLink from "@braindb/remark-wiki-link"
-import { brainDbAstro, getBrainDb } from "@braindb/astro"
+// import { brainDbAstro, getBrainDb } from "@braindb/astro"
 
-// 初始化 BrainDB
-const bdb = getBrainDb()
-await bdb.ready()
+// // 初始化 BrainDB
+// const bdb = getBrainDb()
+// await bdb.ready()
 
 
 // Local integrations
-import { outputCopier } from './src/plugins/output-copier.ts'
 // Local rehype & remark plugins
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
 
@@ -57,41 +56,28 @@ export default defineConfig({
 
   integrations: [
     expressiveCode(),
-    // astro-pure will automatically add sitemap, mdx & unocss
-    // sitemap(),
-    // mdx(),
     icon({
       include: {
         devicon: ['*'],
       }
     }),
     AstroPureIntegration(config),
-    // (await import('@playform/compress')).default({
-    //   SVG: false,
-    //   Exclude: ['index.*.js']
+    // Comment out BrainDB temporarily
+    // brainDbAstro({
+    //   remarkWikiLink: false,
+    //   git: false,
+    //   root: 'src/content',
+    //   cache: true,
+    //   slug: (filePath, collection) => {
+    //     let slug = filePath
+    //       .replace(/^\/\//, '')
+    //       .replace(/^src\/content\//, '')
+    //       .replace(/^\/+/, '')
+    //       .replace(/\.(md|mdx)$/, '')
+    //       .replace(/\/index$/, '')
+    //     return slug
+    //   }
     // }),
-
-    // Temporary fix vercel adapter
-    // static build method is not needed
-    outputCopier({
-      integ: ['sitemap', 'pagefind']
-    }),
-    brainDbAstro({
-      remarkWikiLink: false,
-      git: false,
-      root: 'src/content',
-      cache: true,
-      slug: (filePath, collection) => {
-        // 修复路径规范化
-        let slug = filePath
-          .replace(/^\/\//, '')
-          .replace(/^src\/content\//, '')
-          .replace(/^\/+/, '')
-          .replace(/\.(md|mdx)$/, '')
-          .replace(/\/index$/, '')
-        return slug
-      }
-    }),
   ],
   // root: './my-project-directory',
 
