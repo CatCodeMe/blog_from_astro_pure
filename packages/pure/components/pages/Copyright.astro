@@ -5,19 +5,25 @@ import config from 'virtual:config'
 
 import avatar from '@/assets/avatar.jpg' // 根据实际路径调整
 
-import { cn, getFormattedDate } from '../../utils'
+import { cn, getFormattedDate, showToast } from '../../utils'
 import { QRCode } from '../advanced'
 import { Icon } from '../user'
 
 interface Props<T extends CollectionKey> {
-  data: InferEntrySchema<T>
+  data: InferEntrySchema<T> & {
+    redirect_from?: string | string[]
+  }
+  remarkPluginFrontmatter: Record<string, unknown>
   class?: string
 }
 
 const {
   data: { heroImage, title, publishDate },
+  remarkPluginFrontmatter,
   class: className
 } = Astro.props
+
+const redirect_from = remarkPluginFrontmatter?.redirect_from
 
 const image = typeof heroImage?.src === 'string' ? heroImage?.src : (heroImage?.src?.src ?? '')
 
@@ -32,6 +38,9 @@ const shares = {
     link: `https://bsky.app/intent/compose?text=${title}%0A${Astro.url}`
   }
 } as const
+
+// 将 showToast 函数传递给客户端脚本
+const showToastStr = showToast.toString()
 ---
 
 <div
@@ -140,14 +149,30 @@ const shares = {
   </a>
 </div>
 
-<script>
-  import { showToast } from '../../utils'
+<script define:vars={{ redirect_from, showToastStr }}>
+  // 在客户端重建 showToast 函数
+  const showToast = new Function(`return ${showToastStr}`)()
 
   // Copy link
   const copyLink = document.getElementById('copy-link')
   copyLink?.addEventListener('click', () => {
-    navigator.clipboard.writeText(window.location.href)
-    // Show toast
+    let linkToCopy = window.location.href
+
+    // 如果存在 redirect_from，使用第一个值
+    if (redirect_from) {
+      const redirectUrl = Array.isArray(redirect_from) ? redirect_from[0] : redirect_from
+
+      // 确保链接是完整的 URL
+      if (redirectUrl.startsWith('http')) {
+        linkToCopy = redirectUrl
+      } else {
+        // 如果是相对路径，转换为完整 URL
+        const baseUrl = window.location.origin
+        linkToCopy = `${baseUrl}${redirectUrl.startsWith('/') ? '' : '/'}${redirectUrl}`
+      }
+    }
+
+    navigator.clipboard.writeText(linkToCopy)
     showToast({ message: 'Link copied!' })
   })
 
