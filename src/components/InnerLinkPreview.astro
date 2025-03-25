@@ -68,8 +68,8 @@
     private resizeDirection = ''
     private resizeHandles
     private titleElement
-    private cachedContent = new Map()
-    private scrollbarWidth
+    private readonly MAX_CACHE_SIZE = 10
+    private cachedContent = new Map<string, string>()
     private currentTarget = null
     private mousePosition = { x: 0, y: 0 }
     private isMouseOverTooltip = false
@@ -311,8 +311,13 @@
     }
 
     private async getPreviewContent(href) {
+      // 检查缓存
       if (this.cachedContent.has(href)) {
-        return this.cachedContent.get(href)
+        // 移动到缓存末尾（最近使用）
+        const content = this.cachedContent.get(href)
+        this.cachedContent.delete(href)
+        this.cachedContent.set(href, content)
+        return content
       }
 
       const response = await fetch(href)
@@ -331,13 +336,19 @@
         content.querySelectorAll('pre.mermaid').forEach((el) => {
           el.classList.remove('mermaid')
           el.classList.add('popover-mermaid')
-          // 移除可能存在的 mermaid-wrapper
           const wrapper = el.closest('.mermaid-wrapper')
           if (wrapper) {
             wrapper.replaceWith(el)
           }
         })
 
+        // 检查缓存大小，如果达到最大值则删除最旧的条目
+        if (this.cachedContent.size >= this.MAX_CACHE_SIZE) {
+          const firstKey = this.cachedContent.keys().next().value
+          this.cachedContent.delete(firstKey)
+        }
+
+        // 添加新内容到缓存
         this.cachedContent.set(href, content)
       }
 
