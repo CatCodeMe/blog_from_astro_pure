@@ -13,42 +13,9 @@ heroImage: { src: './markdown-zh/thumbnail.jpg', color: '#B4C6DA' }
 
 [[blog/a|123]]
 
-```shell
-echo 123
-```
-
 ```mermaid
-graph LR
-    A[Start] --> B{Is it?}
-    B -- Yes --> C[OK]
-    C --> D[Rethink]
-    D --> B
-    B -- No --> E[End]
-```
-
-
-```mermaid
----
-title: "TCP Packet"
----
-packet-beta
-0-15: "Source Port"
-16-31: "Destination Port"
-32-63: "Sequence Number"
-64-95: "Acknowledgment Number"
-96-99: "Data Offset"
-100-105: "Reserved"
-106: "URG"
-107: "ACK"
-108: "PSH"
-109: "RST"
-110: "SYN"
-111: "FIN"
-112-127: "Window"
-128-143: "Checksum"
-144-159: "Urgent Pointer"
-160-191: "(Options and Padding)"
-192-255: "Data (variable length)"
+flowchart TD
+    Start --> Stop
 
 ```
 
@@ -129,5 +96,4 @@ Tidal,Electricity grid,9.452
 UK land based bioenergy,Bio-conversion,182.01
 Wave,Electricity grid,19.013
 Wind,Electricity grid,289.366
-
 ```
