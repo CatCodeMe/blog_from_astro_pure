@@ -10,7 +10,6 @@ import rehypeExternalLinks from 'rehype-external-links'
 import UnoCSS from 'unocss/astro'
 
 import { remarkAddZoomable, remarkReadingTime } from './plugins/remark-plugins'
-import { remarkMermaid } from './plugins/remark-mermaid'
 import { vitePluginUserConfig } from './plugins/virtual-user-config'
 import { UserConfigSchema, type UserInputConfig } from './types/user-config'
 import { parseWithFriendlyErrors } from './utils/error-map'
@@ -42,7 +41,6 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
         }
 
         // Add remark plugins
-        remarkPlugins.push(remarkMermaid) // 添加 mermaid 插件
         if (userConfig.integ.mediumZoom.enable)
           remarkPlugins.push([remarkAddZoomable, userConfig.integ.mediumZoom.options])
         remarkPlugins.push(remarkReadingTime)

@@ -13,6 +13,10 @@ heroImage: { src: './markdown-zh/thumbnail.jpg', color: '#B4C6DA' }
 
 [[blog/a|123]]
 
+```java
+String a = '1'
+```
+
 ```mermaid
 flowchart TD
     Start --> Stop
