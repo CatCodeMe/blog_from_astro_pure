@@ -209,6 +209,19 @@
         const href = link.href
         if (!href || (!href.startsWith(window.location.origin) && !href.startsWith('/'))) return
 
+        // 阻止默认的链接点击行为
+        link.addEventListener(
+          'click',
+          (e) => {
+            // 如果按住了 Ctrl/Command 键，使用默认行为（新标签页打开）
+            if (e.ctrlKey || e.metaKey) return
+
+            e.preventDefault()
+            window.location.href = href
+          },
+          { once: true }
+        ) // 使用 once 选项确保事件监听器在触发后被移除
+
         this.currentTarget = link
         this.showLinkPreview(e)
       })

@@ -14,6 +14,18 @@ import config from 'virtual:config'
     border: 1px solid hsl(var(--border));
   }
 
+  /* 添加水印样式 */
+  .mermaid-wrapper::after {
+    content: 'Mermaid';
+    position: absolute;
+    bottom: 1rem;
+    right: 0.5rem;
+    font-size: 3rem;
+    font-weight: bold;
+    color: hsl(var(--muted-foreground) / 0.15);
+    pointer-events: none;
+  }
+
   .mermaid-container {
     padding: 1rem;
     overflow: hidden;
@@ -84,16 +96,16 @@ import config from 'virtual:config'
     height: 28px;
     padding: 0.25rem;
     border-radius: 0.25rem;
-    background: var(--background);
-    border: 1px solid var(--border);
+    background: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
     cursor: pointer;
     opacity: 0.8;
-    color: var(--foreground);
+    color: hsl(var(--foreground));
   }
 
   .mermaid-action-btn:hover {
     opacity: 1;
-    background: var(--muted);
+    background: hsl(var(--muted));
   }
 
   .mermaid-action-btn.copy .success {
@@ -116,11 +128,17 @@ import config from 'virtual:config'
     height: 100%;
     background: hsl(var(--background) / 0.8);
     backdrop-filter: blur(8px);
-    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.2s ease,
+      visibility 0.2s ease;
     z-index: 1000;
   }
 
   .mermaid-modal.active {
+    opacity: 1;
+    visibility: visible;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -138,6 +156,16 @@ import config from 'virtual:config'
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transform: scale(0.95);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .mermaid-modal.active .mermaid-modal-content {
+    opacity: 1;
+    transform: scale(1);
   }
 
   .mermaid-modal .mermaid-container {
@@ -163,8 +191,6 @@ import config from 'virtual:config'
     display: flex;
     gap: 0.75rem;
     padding: 0.75rem;
-    background: hsl(var(--background));
-    border: 1px solid var(--border);
     border-radius: 0.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
@@ -358,6 +384,7 @@ import config from 'virtual:config'
       container.innerHTML = ''
       container.appendChild(clone)
 
+      // 先添加 active 类，触发背景动画
       this.modal.classList.add('active')
 
       // 重置变换
@@ -368,6 +395,7 @@ import config from 'virtual:config'
     }
 
     hide() {
+      // 移除 active 类，触发淡出动画
       this.modal.classList.remove('active')
     }
 
