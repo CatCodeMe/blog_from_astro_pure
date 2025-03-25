@@ -9,20 +9,21 @@ tags:
 language: 'English'
 heroImage: { src: './markdown-zh/thumbnail.jpg', color: '#B4C6DA' }
 ---
-
+1
+2
+3
 
 [[blog/a|123]]
 
 ```java
 String a = '1'
 ```
-
+4
 ```mermaid
 flowchart TD
     Start --> Stop
 
 ```
-
 
 ```mermaid
 ---
