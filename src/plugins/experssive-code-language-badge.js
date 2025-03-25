@@ -22,9 +22,8 @@ export function pluginLanguageBadge() {
         background-position: 0.5rem 50%;
         background-repeat: no-repeat;
         background-size: 0.9rem 0.9rem;
-        background-color: hsl(var(--background) / var(--un-bg-opacity, 1));
-        /*默认图标 hugeicons:laptop-programming */
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 2048 2048'%3E%3Cpath fill='%23000' d='M128 896q52 0 99-20t81-55t55-81t21-100q0-71-3-142t4-138t32-131t79-117q54-54 125-83T768 0v128q-53 0-99 20t-81 55t-55 82t-21 99q0 56 2 110t1 107t-10 102t-27 95t-52 86t-85 76q52 35 85 76t52 86t27 94t9 102t0 107t-2 111q0 53 20 99t55 81t81 55t100 21v128q-76 0-147-29t-125-83t-78-117t-32-130t-5-139t3-142q0-52-20-99t-55-81t-82-55t-99-21zM1280 0q76 0 147 29t125 83t78 117t32 130t5 139t-3 142q0 53 20 99t55 81t81 55t100 21v128q-53 0-99 20t-81 55t-55 82t-21 99q0 71 3 142t-4 138t-32 131t-79 117q-54 54-125 83t-147 29v-128q52 0 99-20t81-55t55-81t21-100q0-56-2-110t-1-107t10-102t27-95t52-86t85-76q-52-35-85-76t-52-86t-27-94t-9-102t0-107t2-111q0-52-20-99t-55-81t-82-55t-99-21z' stroke-width='51' stroke='%23000'/%3E%3C/svg%3E")
+        /*默认图标 mingcute:code-line */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none'%3E%3Cpath d='M0 0h24v24H0z'/%3E%3Cpath fill='%23000' d='M14.486 3.143a1 1 0 0 1 .692 1.233l-4.43 15.788a1 1 0 0 1-1.926-.54l4.43-15.788a1 1 0 0 1 1.234-.693M7.207 7.05a1 1 0 0 1 0 1.414L3.672 12l3.535 3.535a1 1 0 1 1-1.414 1.415L1.55 12.707a1 1 0 0 1 0-1.414L5.793 7.05a1 1 0 0 1 1.414 0m9.586 1.414a1 1 0 1 1 1.414-1.414l4.243 4.243a1 1 0 0 1 0 1.414l-4.243 4.243a1 1 0 0 1-1.414-1.415L20.328 12z'/%3E%3C/g%3E%3C/svg%3E"); 
       }
       
       /* 为不同语言设置背景图标，dev-icon 图标集 */
