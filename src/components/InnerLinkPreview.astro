@@ -9,7 +9,6 @@
     <div class='flex gap-1'>
       <button class='preview-pin p-1 rounded hover:bg-muted' title='Pin preview'>
         <svg class='w-4 h-4' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'>
-          <!-- 新的 pin 图标 -->
           <path
             d='M12 2L12 16M12 16L7 11M12 16L17 11M22 22H2'
             stroke-linecap='round'
@@ -92,9 +91,7 @@
             !this.tooltip.classList.contains('hidden') &&
             this.content.querySelector('pre.popover-mermaid')
           ) {
-            // 重新初始化 mermaid
             await this.initializeMermaid()
-            // 重新渲染图表，无论是否处于 pin 状态
             await this.renderMermaidDiagrams(this.content)
             break
           }
@@ -103,19 +100,6 @@
 
       observer.observe(document.documentElement, {
         attributes: true
-      })
-
-      // 监听系统主题变化
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
-        if (
-          document.documentElement.dataset.theme === 'system' &&
-          !this.tooltip.classList.contains('hidden') &&
-          this.content.querySelector('pre.popover-mermaid')
-        ) {
-          await this.initializeMermaid()
-          // 无论是否处于 pin 状态都重新渲染
-          await this.renderMermaidDiagrams(this.content)
-        }
       })
 
       if (document.readyState === 'loading') {
@@ -245,8 +229,8 @@
         document.body.classList.remove('preview-active')
         this.currentTarget = null
         this.isPinned = false
-        this.pinButton.classList.remove('text-primary')
         this.tooltip.classList.remove('pinned')
+        this.pinButton.classList.remove('text-primary')
       })
 
       this.gotoButton.addEventListener('click', () => {
