@@ -8,6 +8,8 @@ tags:
   - Supabase
 language: 'English'
 heroImage: { src: './markdown-zh/thumbnail.jpg', color: '#B4C6DA' }
+redirect_from:
+  - ccc
 ---
 1
 2

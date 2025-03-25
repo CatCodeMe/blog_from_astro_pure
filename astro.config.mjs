@@ -14,15 +14,10 @@ import { remarkMermaid } from './src/plugins/remark-mermaid'
 // import { visualizer } from 'rollup-plugin-visualizer'
 import rehypeCallouts from 'rehype-callouts'
 import expressiveCode from 'astro-expressive-code'
+import redircetFrom from 'astro-redirect-from'
 
 import icon from 'astro-icon'
-
-// import { brainDbAstro, getBrainDb } from "@braindb/astro"
-
-// // 初始化 BrainDB
-// const bdb = getBrainDb()
-// await bdb.ready()
-
+import path from 'node:path'
 
 // Local integrations
 // Local rehype & remark plugins
@@ -56,6 +51,22 @@ export default defineConfig({
   },
 
   integrations: [
+    redircetFrom({
+      contentDir: "./src/content",
+      getSlug: (filePath) => {
+        const parsedPath = path.parse(filePath)
+        let slug
+        // construct slug as full path from either:
+        // - folder name if file name is index.md, or
+        // - file name
+        if (parsedPath.base === 'index.md' || parsedPath.base === 'index.mdx') {
+          slug = `${parsedPath.dir}`
+        } else {
+          slug = `${parsedPath.dir}/${parsedPath.name}`
+        }
+        return slug
+      }
+    }),
     expressiveCode(),
     icon({
       include: {

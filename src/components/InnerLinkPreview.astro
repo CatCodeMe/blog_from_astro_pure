@@ -90,11 +90,11 @@
           if (
             mutation.attributeName === 'data-theme' &&
             !this.tooltip.classList.contains('hidden') &&
-            this.content.querySelector('pre.mermaid')
+            this.content.querySelector('pre.popover-mermaid')
           ) {
             // 重新初始化 mermaid
             await this.initializeMermaid()
-            // 重新渲染图表
+            // 重新渲染图表，无论是否处于 pin 状态
             await this.renderMermaidDiagrams(this.content)
             break
           }
@@ -110,9 +110,10 @@
         if (
           document.documentElement.dataset.theme === 'system' &&
           !this.tooltip.classList.contains('hidden') &&
-          this.content.querySelector('pre.mermaid')
+          this.content.querySelector('pre.popover-mermaid')
         ) {
           await this.initializeMermaid()
+          // 无论是否处于 pin 状态都重新渲染
           await this.renderMermaidDiagrams(this.content)
         }
       })
@@ -195,7 +196,7 @@
     bindEvents() {
       document.addEventListener('mouseover', (e) => {
         // 检查链接是否在 main 标签内
-        const link = e.target.closest('main a')
+        const link = e.target.closest('article a.internal-link')
         if (!link) return
 
         // 忽略预览窗口内的链接
@@ -216,15 +217,13 @@
     setupControls() {
       this.pinButton.addEventListener('click', () => {
         this.isPinned = !this.isPinned
-        this.pinButton.classList.toggle('text-primary')
-
-        // pin 状态变更时更新样式
+        this.pinButton.classList.toggle('text-primary', this.isPinned)
         this.tooltip.classList.toggle('pinned', this.isPinned)
-        // pin 状态时移除遮罩层
+
         if (this.isPinned) {
           document.body.classList.remove('preview-active')
         } else {
-          document.body.classList.add('preview-active')
+          this.checkShouldHide()
         }
       })
 
