@@ -1,6 +1,5 @@
 <script is:inline src='https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js'></script>
 
-<!-- 移除 FloatingUI 的脚本引入 -->
 <div
   id='linkpreview'
   class='hidden fixed z-50 w-full max-w-2xl bg-background border rounded-lg shadow-lg overflow-hidden'
@@ -49,7 +48,6 @@
   declare global {
     interface Window {
       mermaid: any
-      // 移除 FloatingUIDOM 声明
     }
   }
 
