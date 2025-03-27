@@ -7,7 +7,7 @@ import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
-import avatar from '@/assets/avatar.jpg'
+import avatar from '@/assets/avatar.png'
 import config from '@/site-config'
 
 const languages = [
@@ -106,11 +106,17 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         <div
           class='flex items-center gap-x-3 rounded-full border bg-background/80 px-4 py-2 text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
         >
-          <span class='relative flex h-2 w-2'>
+          <!-- <span class='relative flex h-2 w-2'>
             <span
               class='absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75'
             ></span>
             <span class='relative inline-flex h-2 w-2 rounded-full bg-green-400'></span>
+          </span> -->
+          <span class='relative flex items-center justify-center'>
+            <span
+              class='absolute size-2 animate-ping rounded-full border border-red-400 bg-green-400 opacity-75'
+            ></span>
+            <span class='size-2 rounded-full bg-green-400'></span>
           </span>
           <p class='font-medium text-muted-foreground'>五帝三皇神圣事，骗了无涯过客</p>
         </div>
@@ -129,7 +135,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         <Section title='Latest Posts'>
           {
             allPostsByDate.length > 0 && (
-              <ul class='flex flex-col gap-y-4'>
+              <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
                 {allPostsByDate.map((p) => (
                   <li class='flex flex-col gap-x-2 sm:flex-row'>
                     <PostPreview post={p} />
@@ -138,16 +144,14 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
               </ul>
             )
           }
-          <Button title='More posts' class='mt-8 w-fit self-end' href='/blog' style='ahead' />
+          <Button title='More posts' class='w-fit self-end' href='/blog' style='ahead' />
         </Section>
 
         <!-- 技能部分 -->
         <Section title='Skills' class='mt-20'>
-          <div class='flex flex-col gap-8'>
-            <SkillLayout title='Languages' skills={languages} />
-            <SkillLayout title='Backend' skills={backend} />
-            <SkillLayout title='IDE' skills={ide} />
-          </div>
+          <SkillLayout title='Languages' skills={languages} />
+          <SkillLayout title='Backend' skills={backend} />
+          <SkillLayout title='IDE' skills={ide} />
         </Section>
       </div>
     </section>
