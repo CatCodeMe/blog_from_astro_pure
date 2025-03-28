@@ -7,7 +7,7 @@ import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import Section from '@/components/home/Section.astro'
 import SkillLayout from '@/components/home/SkillLayout.astro'
-import avatar from '@/assets/avatar.jpg'
+import avatar from '@/assets/avatar.png'
 import config from '@/site-config'
 
 const languages = [
@@ -36,76 +36,239 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 ---
 
 <PageLayout meta={{ title: 'Home' }} highlightColor='#da9d0c'>
-  <main class='flex w-full flex-col items-center'>
-    <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
-      <Image
-        src={avatar}
-        alt='profile'
-        class='size-28 rounded-full border p-1 object-cover'
-        loading='eager'
-      />
+  <main class='flex w-full flex-col'>
+    <!-- 第一屏 -->
+    <section class='relative min-h-screen w-full'>
+      <!-- 网格背景 -->
+      <div class='grid-background absolute inset-0 z-0'></div>
 
-      <div class='flex flex-col items-center gap-y-4'>
-        <h1 class='text-3xl font-bold'>{config.author}</h1>
-        <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
-          <Label title='Beijing, China'>
-            <Icon name='location' class='size-5' slot='icon' />
-          </Label>
-          <Label
-            title='Source code'
-            as='a'
-            href='https://github.com/cworld1/astro-theme-pure'
-            target='_blank'
-          >
-            <Icon name='github' class='size-5' slot='icon' />
-          </Label>
+      <!-- 主要内容 - 调整垂直位置 -->
+      <div class='relative z-10 flex min-h-screen items-start px-4 pt-32'>
+        <div class='mx-auto w-full max-w-7xl'>
+          <!-- 个人信息 -->
+          <div class='flex flex-col justify-center gap-6'>
+            <div class='flex items-center gap-4'>
+              <Image
+                src={avatar}
+                alt='profile'
+                class='size-20 rounded-full border object-cover'
+                loading='eager'
+              />
+              <div class='flex flex-col'>
+                <div class='flex items-center gap-2'>
+                  <span class='waving-hand'>👋</span>
+                  <h1 class='text-4xl font-bold'>
+                    <span class='marker-highlight'>{config.author}</span>
+                  </h1>
+                </div>
+              </div>
+            </div>
+
+            <div class='flex gap-4'>
+              <Label title='Beijing, China'>
+                <Icon name='location' class='size-5' slot='icon' />
+              </Label>
+              <Label
+                title='Source code'
+                as='a'
+                href='https://github.com/cworld1/astro-theme-pure'
+                target='_blank'
+              >
+                <Icon name='github' class='size-5' slot='icon' />
+              </Label>
+            </div>
+
+            <div class='flex flex-col gap-3 text-lg text-muted-foreground typing-text'>
+              <p>
+                <span class='inline-block mr-2'>→</span>
+                I'm a software engineer based in Beijing, China.
+              </p>
+              <p>
+                <span class='inline-block mr-2'>→</span>
+                I'm passionate about programming and open-source.
+              </p>
+              <p>
+                <span class='inline-block mr-2'>→</span>
+                I'm currently working on a few projects and learning new things every day.
+              </p>
+            </div>
+
+            <div class='flex gap-4'>
+              <Button title='About Me' href='/about' style='ahead' />
+              <Button title='View Blog' href='/blog' style='ahead' />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Get template */}
-      <div
-        class='flex flex-row items-center gap-x-3 rounded-full border bg-background px-4 py-2 text-sm shadow-sm transition-shadow hover:shadow-md'
-      >
-        <span class='relative flex items-center justify-center'>
-          <span
-            class='absolute size-2 animate-ping rounded-full border border-red-400 bg-green-400 opacity-75'
-          ></span>
-          <span class='size-2 rounded-full bg-green-400'></span>
-        </span>
-        <p class='font-medium text-muted-foreground'>五帝三皇神圣事,骗了无涯过客</p>
+      <!-- 格言 - 调整位置到内容下方 -->
+      <div class='absolute bottom-[30%] left-1/2 -translate-x-1/2'>
+        <div
+          class='flex items-center gap-x-3 rounded-full border bg-background/80 px-4 py-2 text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
+        >
+          <!-- <span class='relative flex h-2 w-2'>
+            <span
+              class='absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75'
+            ></span>
+            <span class='relative inline-flex h-2 w-2 rounded-full bg-green-400'></span>
+          </span> -->
+          <span class='relative flex items-center justify-center'>
+            <span
+              class='absolute size-2 animate-ping rounded-full border border-red-400 bg-green-400 opacity-75'
+            ></span>
+            <span class='size-2 rounded-full bg-green-400'></span>
+          </span>
+          <p class='font-medium text-muted-foreground'>五帝三皇神圣事，骗了无涯过客</p>
+        </div>
+      </div>
+
+      <!-- 向下滚动指示器 - 调整位置并加强动画 -->
+      <div class='absolute bottom-[15%] left-1/2 -translate-x-1/2'>
+        <span class='inline-block animate-bounce text-3xl text-muted-foreground'>⌄</span>
       </div>
     </section>
 
-    <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
-      <Section title='About'>
-        <p class='text-muted-foreground'>Developer</p>
-        <p class='text-muted-foreground'>
-          I'm a software engineer based in Beijing, China. I'm passionate about programming and
-          open-source. I'm currently working on a few projects and learning new things every day.
-        </p>
-        <Button title='More about me' class='w-fit self-end' href='/about' style='ahead' />
-      </Section>
-      {
-        allPostsByDate.length > 0 && (
-          <Section title='Posts'>
-            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
-              {allPostsByDate.map((p) => (
-                <li class='flex flex-col gap-x-2 sm:flex-row'>
-                  <PostPreview post={p} />
-                </li>
-              ))}
-            </ul>
-            <Button title='More posts' class='w-fit self-end' href='/blog' style='ahead' />
-          </Section>
-        )
-      }
+    <!-- 第二屏：博客文章和技能 -->
+    <section class='w-full py-20'>
+      <div class='mx-auto max-w-4xl px-4'>
+        <!-- 博客文章部分 -->
+        <Section title='Latest Posts'>
+          {
+            allPostsByDate.length > 0 && (
+              <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+                {allPostsByDate.map((p) => (
+                  <li class='flex flex-col gap-x-2 sm:flex-row'>
+                    <PostPreview post={p} />
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          <Button title='More posts' class='w-fit self-end' href='/blog' style='ahead' />
+        </Section>
 
-      <Section title='Skills'>
-        <SkillLayout title='Languages' skills={languages} />
-        <SkillLayout title='Backend' skills={backend} />
-        <SkillLayout title='Ide' skills={ide} />
-      </Section>
-    </div>
-    <!-- <Quote class='mt-12' /> -->
+        <!-- 技能部分 -->
+        <Section title='Skills' class='mt-20'>
+          <SkillLayout title='Languages' skills={languages} />
+          <SkillLayout title='Backend' skills={backend} />
+          <SkillLayout title='IDE' skills={ide} />
+        </Section>
+      </div>
+    </section>
   </main>
 </PageLayout>
+
+<style>
+  /* 网格背景 */
+  .grid-background {
+    background-image:
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    mask-image: linear-gradient(to bottom, transparent, 15%, white, 85%, transparent);
+  }
+
+  :root {
+    --grid-color: rgba(218, 157, 12, 0.1);
+  }
+
+  /* 招手动画 */
+  .waving-hand {
+    display: inline-block;
+    animation: wave 2.5s infinite;
+    transform-origin: 70% 70%;
+    font-size: 1.5em;
+  }
+
+  @keyframes wave {
+    0% {
+      transform: rotate(0deg);
+    }
+    10% {
+      transform: rotate(14deg);
+    }
+    20% {
+      transform: rotate(-8deg);
+    }
+    30% {
+      transform: rotate(14deg);
+    }
+    40% {
+      transform: rotate(-4deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+    60% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+
+  /* 马克笔划线效果 */
+  .marker-highlight {
+    position: relative;
+    display: inline-block;
+  }
+
+  .marker-highlight::after {
+    content: '';
+    position: absolute;
+    left: -0.1em;
+    right: -0.1em;
+    bottom: 0;
+    height: 0.3em;
+    background: rgba(218, 157, 12, 0.3);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: highlight 1s ease-in-out forwards 0.5s;
+  }
+
+  @keyframes highlight {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* 打字机效果 */
+  .typing-text {
+    opacity: 0;
+    animation: fadeIn 1s ease-out forwards 1s;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 格言闪烁效果 */
+  .glowing-text {
+    color: #2ecc71;
+    text-shadow: 0 0 5px #2ecc71;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      text-shadow:
+        0 0 5px #2ecc71,
+        0 0 10px #2ecc71,
+        0 0 15px #2ecc71;
+    }
+    to {
+      text-shadow:
+        0 0 10px #2ecc71,
+        0 0 20px #2ecc71,
+        0 0 30px #2ecc71;
+    }
+  }
+</style>
