@@ -48,13 +48,38 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
           <!-- 个人信息 -->
           <div class='flex items-center gap-16'>
             <!-- 左侧大头像 -->
-            <div class='shrink-0'>
-              <Image
-                src={avatar}
-                alt='profile'
-                class='size-64 rounded-full border-2 border-border object-cover shadow-lg'
-                loading='eager'
-              />
+            <div class='avatar-container relative shrink-0'>
+              <!-- 装饰星星 -->
+              <div class='stars'>
+                <!-- 上方星星 -->
+                <span class='star' style='--delay: 0s; --offset: -20px'>✨</span>
+                <span class='star' style='--delay: 2s; --offset: -15px'>✨</span>
+                <!-- 右侧星星 -->
+                <span class='star' style='--delay: 1s; --offset: -20px'>✨</span>
+                <span class='star' style='--delay: 1s; --offset: -15px'>✨</span>
+                <!-- 下方星星 -->
+                <span class='star' style='--delay: 2s; --offset: -20px'>✨</span>
+                <span class='star' style='--delay: 2.5s; --offset: -15px'>✨</span>
+                <!-- 左侧星星 -->
+                <span class='star' style='--delay: 3s; --offset: -20px'>✨</span>
+                <span class='star' style='--delay: 1.5s; --offset: -15px'>✨</span>
+              </div>
+
+              <div class='avatar-wrapper relative'>
+                <Image
+                  src={avatar}
+                  alt='profile'
+                  class='size-64 rounded-full border-2 border-border object-cover shadow-lg transition-all duration-300 hover:grayscale'
+                  loading='eager'
+                />
+                <div class='avatar-message'>
+                  <p><span class='speaker'></span>2016 - 2024.10.29</p>
+                  <p><span class='speaker'>🌹:</span>I miss you, CCM...</p>
+                  <p><span class='speaker'>CCM:</span>I miss you too, 🌹.</p>
+                  <p><span class='speaker'></span>You will live forever on the internet,</p>
+                  <p><span class='speaker'></span>and forever in my heart...</p>
+                </div>
+              </div>
             </div>
 
             <!-- 右侧内容 -->
@@ -135,12 +160,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         <div
           class='flex items-center gap-x-3 rounded-full border bg-background/80 px-4 py-2 text-sm shadow-sm backdrop-blur transition-shadow hover:shadow-md'
         >
-          <!-- <span class='relative flex h-2 w-2'>
-            <span
-              class='absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75'
-            ></span>
-            <span class='relative inline-flex h-2 w-2 rounded-full bg-green-400'></span>
-          </span> -->
           <span class='relative flex items-center justify-center'>
             <span
               class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
@@ -287,8 +306,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     }
   }
 
-  /* 现有样式保持不变 */
-
   /* 工具提示样式 */
   [data-tooltip] {
     position: relative;
@@ -300,7 +317,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    padding: 0.4em 0.8em;
+    padding: 0.4em 0.4em;
     background: hsl(var(--popover));
     color: hsl(var(--popover-foreground));
     font-size: 0.875rem;
@@ -340,29 +357,163 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
   .author-name {
     position: relative;
     color: var(--highlightColor, hsl(var(--primary)));
-    transition: color 0.2s ease;
   }
 
   .author-name::before {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 100%;
+    bottom: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%);
-    padding: 0.4em 0.8em;
+    padding: 2px 8px;
     background: hsl(var(--popover));
     color: hsl(var(--popover-foreground));
-    font-size: 0.875rem;
-    border-radius: 0.4rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
     white-space: nowrap;
+    border: 1px solid hsl(var(--border));
     opacity: 0;
     pointer-events: none;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   .author-name:hover::before {
     opacity: 1;
-    transform: translateX(-50%) translateY(-8px);
+  }
+
+  .avatar-container {
+    --star-duration: 6s;
+  }
+
+  .stars {
+    position: absolute;
+    inset: -25px;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: float-star var(--star-duration) ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+
+  /* 上方星星 */
+  .star:nth-child(1) {
+    top: var(--offset);
+    left: 35%;
+  }
+  .star:nth-child(2) {
+    top: var(--offset);
+    left: 65%;
+  }
+
+  /* 右侧星星 */
+  .star:nth-child(3) {
+    top: 35%;
+    right: var(--offset);
+  }
+  .star:nth-child(4) {
+    top: 65%;
+    right: var(--offset);
+  }
+
+  /* 下方星星 */
+  .star:nth-child(5) {
+    bottom: var(--offset);
+    left: 35%;
+  }
+  .star:nth-child(6) {
+    bottom: var(--offset);
+    left: 65%;
+  }
+
+  /* 左侧星星 */
+  .star:nth-child(7) {
+    top: 35%;
+    left: var(--offset);
+  }
+  .star:nth-child(8) {
+    top: 65%;
+    left: var(--offset);
+  }
+
+  @keyframes float-star {
+    0%,
+    100% {
+      transform: translate(var(--tx, 0), var(--ty, 0)) scale(0.5);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    50% {
+      transform: translate(var(--tx, 0), var(--ty, 0)) scale(1);
+      opacity: 1;
+    }
+    75% {
+      opacity: 1;
+    }
+  }
+
+  /* 为每个星星设置不同的浮动方向 */
+  .star:nth-child(odd) {
+    --tx: -10px;
+    --ty: -10px;
+  }
+  .star:nth-child(even) {
+    --tx: 10px;
+    --ty: 10px;
+  }
+
+  .curved-arrow {
+    animation: arrow-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes arrow-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+  }
+
+  /* 新的头像消息样式 */
+  .avatar-wrapper {
+    position: relative;
+    cursor: none; /* 隐藏默认光标 */
+  }
+
+  .avatar-message {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%) translateY(calc(100% + 1rem));
+    width: max-content;
+    color: hsl(var(--muted-foreground) / 0.6);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+
+  .avatar-message p {
+    margin: 0.2em 0;
+    display: flex;
+    gap: 0.5em;
+    align-items: baseline;
+  }
+
+  .avatar-message .speaker {
+    min-width: 3em;
+    text-align: right;
+  }
+  .avatar-wrapper:hover .avatar-message {
+    opacity: 1;
   }
 </style>
