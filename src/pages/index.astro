@@ -46,56 +46,85 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
       <div class='relative z-10 flex min-h-screen items-start px-4 pt-32'>
         <div class='mx-auto w-full max-w-7xl'>
           <!-- 个人信息 -->
-          <div class='flex flex-col justify-center gap-6'>
-            <div class='flex items-center gap-4'>
+          <div class='flex items-center gap-16'>
+            <!-- 左侧大头像 -->
+            <div class='shrink-0'>
               <Image
                 src={avatar}
                 alt='profile'
-                class='size-20 rounded-full border object-cover'
+                class='size-64 rounded-full border-2 border-border object-cover shadow-lg'
                 loading='eager'
               />
-              <div class='flex flex-col'>
-                <div class='flex items-center gap-2'>
-                  <span class='waving-hand'>👋</span>
-                  <h1 class='text-4xl font-bold'>
-                    <span class='marker-highlight'>{config.author}</span>
-                  </h1>
-                </div>
+            </div>
+
+            <!-- 右侧内容 -->
+            <div class='flex flex-col gap-8'>
+              <!-- 标题区域 -->
+              <div class='flex items-center gap-3'>
+                <h1 class='text-3xl font-bold'>
+                  Welcome to my site, this is <span
+                    class='author-name cursor-help'
+                    data-tooltip='cat & code & me'>{config.author}</span
+                  >
+                  <span class='waving-hand text-2xl'>👋</span>
+                </h1>
               </div>
-            </div>
 
-            <div class='flex gap-4'>
-              <Label title='Beijing, China'>
-                <Icon name='location' class='size-5' slot='icon' />
-              </Label>
-              <Label
-                title='Source code'
-                as='a'
-                href='https://github.com/cworld1/astro-theme-pure'
-                target='_blank'
-              >
-                <Icon name='github' class='size-5' slot='icon' />
-              </Label>
-            </div>
+              <!-- 个人简介 -->
+              <div class='flex flex-col gap-3 text-lg text-muted-foreground'>
+                <p>
+                  <span class='inline-block mr-2'>→</span>
+                  I'm a software engineer based in <Icon
+                    name='location'
+                    class='size-6 inline-block align-text-bottom text-muted-foreground'
+                  /> Beijing, China.
+                </p>
+                <p>
+                  <span class='inline-block mr-2'>→</span>
+                  I'm passionate about programming and open-source.
+                </p>
+                <p>
+                  <span class='inline-block mr-2'>→</span>
+                  I'm currently working on a few projects and learning new things every day.
+                </p>
+              </div>
 
-            <div class='flex flex-col gap-3 text-lg text-muted-foreground typing-text'>
-              <p>
-                <span class='inline-block mr-2'>→</span>
-                I'm a software engineer based in Beijing, China.
-              </p>
-              <p>
-                <span class='inline-block mr-2'>→</span>
-                I'm passionate about programming and open-source.
-              </p>
-              <p>
-                <span class='inline-block mr-2'>→</span>
-                I'm currently working on a few projects and learning new things every day.
-              </p>
-            </div>
+              <!-- 社交媒体图标 -->
+              <div class='flex gap-4'>
+                <Label
+                  title='GitHub'
+                  as='a'
+                  href='https://github.com/your-github'
+                  target='_blank'
+                  class='transition-colors hover:text-primary'
+                >
+                  <Icon name='github' class='size-6' slot='icon' />
+                </Label>
+                <Label
+                  title='twitter'
+                  as='a'
+                  href='https://twitter.com/your-handle'
+                  target='_blank'
+                  class='transition-colors hover:text-primary'
+                >
+                  <Icon name='x' class='size-6' slot='icon' />
+                </Label>
+                <Label
+                  title='Bilibili'
+                  as='a'
+                  href='https://space.bilibili.com/your-id'
+                  target='_blank'
+                  class='transition-colors hover:text-primary'
+                >
+                  <Icon name='bilibili' class='size-6' slot='icon' />
+                </Label>
+              </div>
 
-            <div class='flex gap-4'>
-              <Button title='About Me' href='/about' style='ahead' />
-              <Button title='View Blog' href='/blog' style='ahead' />
+              <!-- 按钮组 -->
+              <div class='flex gap-4'>
+                <Button title='About Me' href='/about' style='ahead' />
+                <Button title='View Blog' href='/blog' style='ahead' />
+              </div>
             </div>
           </div>
         </div>
@@ -207,36 +236,22 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     }
   }
 
-  /* 马克笔划线效果 */
-  .marker-highlight {
-    position: relative;
-    display: inline-block;
+  /* 光标闪烁动画 */
+  .cursor-blink::after {
+    content: '|';
+    margin-left: 0.1em;
+    animation: blink 1s step-end infinite;
+    color: var(--highlightColor, hsl(var(--primary)));
   }
 
-  .marker-highlight::after {
-    content: '';
-    position: absolute;
-    left: -0.1em;
-    right: -0.1em;
-    bottom: 0;
-    height: 0.3em;
-    background: rgba(218, 157, 12, 0.3);
-    z-index: -1;
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: highlight 1s ease-in-out forwards 0.5s;
-  }
-
-  @keyframes highlight {
+  @keyframes blink {
+    from,
     to {
-      transform: scaleX(1);
+      opacity: 1;
     }
-  }
-
-  /* 打字机效果 */
-  .typing-text {
-    opacity: 0;
-    animation: fadeIn 1s ease-out forwards 1s;
+    50% {
+      opacity: 0;
+    }
   }
 
   @keyframes fadeIn {
@@ -270,5 +285,84 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         0 0 20px #2ecc71,
         0 0 30px #2ecc71;
     }
+  }
+
+  /* 现有样式保持不变 */
+
+  /* 工具提示样式 */
+  [data-tooltip] {
+    position: relative;
+  }
+
+  [data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.4em 0.8em;
+    background: hsl(var(--popover));
+    color: hsl(var(--popover-foreground));
+    font-size: 0.875rem;
+    border-radius: 0.4rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  [data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
+  }
+
+  /* 标记高亮效果 */
+  .marker-highlight {
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      transparent 50%,
+      hsl(var(--primary) / 0.2) 50%,
+      hsl(var(--primary) / 0.2) 100%
+    );
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    transition: background-position 0.3s ease;
+    padding: 0.1em 0.2em;
+    border-radius: 0.2em;
+  }
+
+  .marker-highlight:hover {
+    background-position: 0 0;
+  }
+
+  .author-name {
+    position: relative;
+    color: var(--highlightColor, hsl(var(--primary)));
+    transition: color 0.2s ease;
+  }
+
+  .author-name::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.4em 0.8em;
+    background: hsl(var(--popover));
+    color: hsl(var(--popover-foreground));
+    font-size: 0.875rem;
+    border-radius: 0.4rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .author-name:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-8px);
   }
 </style>
