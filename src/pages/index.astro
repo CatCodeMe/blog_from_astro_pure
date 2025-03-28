@@ -74,8 +74,8 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
                 />
                 <div class='avatar-message'>
                   <p><span class='speaker'></span>2016 - 2024.10.29</p>
-                  <p><span class='speaker'>🌹:</span>I miss you, CCM...</p>
-                  <p><span class='speaker'>CCM:</span>I miss you too, 🌹.</p>
+                  <p><span class='speaker'>小花:</span>I miss you, CCM...</p>
+                  <p><span class='speaker'>CCM:</span>I miss you too, 小花.</p>
                   <p><span class='speaker'></span>You will live forever on the internet,</p>
                   <p><span class='speaker'></span>and forever in my heart...</p>
                 </div>
@@ -252,57 +252,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
     }
     100% {
       transform: rotate(0deg);
-    }
-  }
-
-  /* 光标闪烁动画 */
-  .cursor-blink::after {
-    content: '|';
-    margin-left: 0.1em;
-    animation: blink 1s step-end infinite;
-    color: var(--highlightColor, hsl(var(--primary)));
-  }
-
-  @keyframes blink {
-    from,
-    to {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* 格言闪烁效果 */
-  .glowing-text {
-    color: #2ecc71;
-    text-shadow: 0 0 5px #2ecc71;
-    animation: glow 2s ease-in-out infinite alternate;
-  }
-
-  @keyframes glow {
-    from {
-      text-shadow:
-        0 0 5px #2ecc71,
-        0 0 10px #2ecc71,
-        0 0 15px #2ecc71;
-    }
-    to {
-      text-shadow:
-        0 0 10px #2ecc71,
-        0 0 20px #2ecc71,
-        0 0 30px #2ecc71;
     }
   }
 

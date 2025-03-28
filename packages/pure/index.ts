@@ -57,7 +57,7 @@ export default function AstroPureIntegration(opts: UserInputConfig): AstroIntegr
               className: ['external-link-icon']
             },
             properties: {
-              className: ['external-link']
+              className: ['external-link','not-prose']
             },
             target: '_blank',
             rel: ['nofollow', 'noopener', 'noreferrer'],
