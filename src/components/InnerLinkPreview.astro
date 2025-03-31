@@ -83,6 +83,7 @@
       this.setupControls()
       this.setupDragging()
       this.setupResize()
+      this.setupThemeObserver()
       this.initializeMermaid()
     }
 
@@ -396,6 +397,35 @@
       })
     }
 
+    setupThemeObserver() {
+      // 监听系统主题变化
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
+        if (document.documentElement.dataset.theme === 'system') {
+          await this.initializeMermaid()
+          if (this.content) {
+            await this.renderMermaidDiagrams(this.content)
+          }
+        }
+      })
+
+      // 监听主题切换
+      const observer = new MutationObserver(async (mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.attributeName === 'data-theme') {
+            await this.initializeMermaid()
+            if (this.content) {
+              await this.renderMermaidDiagrams(this.content)
+            }
+          }
+        }
+      })
+
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      })
+    }
+
     async initializeMermaid() {
       if (window.mermaid) {
         const theme = document.documentElement.dataset.theme
@@ -406,7 +436,8 @@
 
         await window.mermaid.initialize({
           startOnLoad: false,
-          theme: isDark ? 'dark' : 'default'
+          theme: isDark ? 'dark' : 'default',
+          darkMode: isDark
         })
       }
     }
