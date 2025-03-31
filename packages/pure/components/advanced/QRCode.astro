@@ -1,4 +1,5 @@
 ---
+import type { CollectionEntry } from 'astro:content'
 import config from 'virtual:config'
 
 import avatar from '@/assets/avatar.jpeg'
@@ -6,15 +7,23 @@ import avatar from '@/assets/avatar.jpeg'
 interface Props {
   content?: string
   class?: string
-  circular?: boolean // 新增参数控制是否需要圆形处理
+  circular?: boolean
+  remarkPluginFrontmatter?: Record<string, unknown>
 }
 
-const { content, class: className, circular = true, ...props } = Astro.props
+const {
+  content,
+  class: className,
+  circular = true,
+  remarkPluginFrontmatter,
+  ...props
+} = Astro.props
+const redirect_from = remarkPluginFrontmatter?.redirect_from as string | string[] | undefined
 ---
 
 <div id='qrcode-container' class={className} {...props}></div>
 
-<script define:vars={{ content, avatarUrl: avatar.src, circular }}>
+<script define:vars={{ content, avatarUrl: avatar.src, circular, redirect_from }}>
   function loadScript(src) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script')
@@ -23,6 +32,26 @@ const { content, class: className, circular = true, ...props } = Astro.props
       script.onerror = reject
       document.head.appendChild(script)
     })
+  }
+
+  function getQRCodeContent() {
+    // 如果提供了明确的 content，优先使用
+    if (content) return content
+
+    // 如果有 redirect_from，使用它构建短链接
+    if (redirect_from) {
+      const redirectUrl = Array.isArray(redirect_from) ? redirect_from[0] : redirect_from
+      // 如果是完整 URL，直接使用
+      if (redirectUrl.startsWith('http')) {
+        return redirectUrl
+      }
+      // 否则，构建完整 URL
+      const baseUrl = window.location.origin
+      return `${baseUrl}${redirectUrl.startsWith('/') ? '' : '/'}${redirectUrl}`
+    }
+
+    // 如果都没有，使用当前页面 URL
+    return window.location.href
   }
 
   async function processImage(url, makeCircular) {
@@ -78,7 +107,7 @@ const { content, class: className, circular = true, ...props } = Astro.props
         width: DEFAULT_SIZE,
         height: DEFAULT_SIZE,
         type: 'svg',
-        data: content ?? window.location.href,
+        data: getQRCodeContent(),
         image: processedImage,
         dotsOptions: {
           color: '#000000',
