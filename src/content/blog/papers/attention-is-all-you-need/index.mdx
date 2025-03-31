@@ -23,12 +23,8 @@ import Paper from '@/custom/components/pages/Paper.astro'
     doi: '10.1080/10286632.2013.832233',
     isbn: '123-4123-1525-5123',
     citations: 123456,
+    paperUrl: "https://example.com/paper",
     star: 6,
-    titleImage: {
-      src: './paper.png',
-      alt: 'Attention Is All You Need Paper',
-      
-    },
     tags: ['Transformer', 'Attention Mechanism', 'Neural Networks Neural Networks Neural Networks Neural Networks Neural Networks',]
   },
   index: 99
@@ -43,10 +39,10 @@ import Paper from '@/custom/components/pages/Paper.astro'
     title: 'Attention Is All You Need',
     subTitle: 'Introducing the Transformer architecture',
     publishDate: '2017-12-06',
-    citations: 123456,  // 会显示为 "123,456 citations"
-    doi: '10.1080/10286632.2013.832233',
-    // ... 其他属性
-  }
+    citations: 123456,
+    tags: ['Transformer', 'Attention Mechanism', 'Neural Networks']
+  },
+  index: 1
 }} />
 
 <Paper paper={{
@@ -56,10 +52,7 @@ import Paper from '@/custom/components/pages/Paper.astro'
     publishDate: '2017-12-06',
     journal: 'NeurIPS 2017',
     star: 6,
-    titleImage: {
-      src: './paper.png',
-      alt: 'Attention Is All You Need Paper'
-    },
+    publisher: 'arxiv',
     tags: ['Transformer', 'Attention Mechanism', 'Neural Networks Neural Networks Neural Networks Neural Networks Neural Networks',]
   },
   index: 1002
