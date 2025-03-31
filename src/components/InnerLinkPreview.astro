@@ -77,39 +77,16 @@
     constructor() {
       if (window.matchMedia('(max-width: 768px)').matches) return
 
-      // 跟踪鼠标位置
-      document.addEventListener('mousemove', (e) => {
-        this.mousePosition = { x: e.clientX, y: e.clientY }
-        this.checkShouldHide()
-      })
-
-      // 监听主题变化，重新渲染 mermaid
-      const observer = new MutationObserver(async (mutations) => {
-        for (const mutation of mutations) {
-          if (
-            mutation.attributeName === 'data-theme' &&
-            !this.tooltip.classList.contains('hidden') &&
-            this.content.querySelector('pre.popover-mermaid')
-          ) {
-            await this.initializeMermaid()
-            await this.renderMermaidDiagrams(this.content)
-            break
-          }
-        }
-      })
-
-      observer.observe(document.documentElement, {
-        attributes: true
-      })
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => this.initialize())
-      } else {
-        this.initialize()
-      }
+      // 移除滚动条宽度计算相关代码
+      this.initializeElements()
+      this.bindEvents()
+      this.setupControls()
+      this.setupDragging()
+      this.setupResize()
+      this.initializeMermaid()
     }
 
-    initialize() {
+    initializeElements() {
       this.tooltip = document.querySelector('#linkpreview')
       if (!this.tooltip) return
 
@@ -130,11 +107,6 @@
         this.isMouseOverTooltip = false
         this.checkShouldHide()
       })
-
-      this.setupDragging()
-      this.setupResize()
-      this.setupControls()
-      this.bindEvents()
     }
 
     checkShouldHide() {
@@ -180,7 +152,7 @@
     bindEvents() {
       document.addEventListener('mouseover', (e) => {
         // 检查链接是否在 main 标签内
-        const link = e.target.closest('article a.internal-link')
+        const link = e.target.closest('article a.inner-link')
         if (!link) return
 
         // 忽略预览窗口内的链接
@@ -216,17 +188,10 @@
         this.isPinned = !this.isPinned
         this.pinButton.classList.toggle('text-primary', this.isPinned)
         this.tooltip.classList.toggle('pinned', this.isPinned)
-
-        if (this.isPinned) {
-          document.body.classList.remove('preview-active')
-        } else {
-          this.checkShouldHide()
-        }
       })
 
       this.closeButton.addEventListener('click', () => {
         this.tooltip.classList.add('hidden')
-        document.body.classList.remove('preview-active')
         this.currentTarget = null
         this.isPinned = false
         this.tooltip.classList.remove('pinned')
@@ -273,10 +238,7 @@
             this.content.innerHTML = content.innerHTML
 
             this.tooltip.classList.remove('hidden')
-            if (!this.isPinned) {
-              document.body.classList.add('preview-active')
-            }
-
+            // 移除 preview-active 类的添加
             if (!this.isPinned) {
               this.positionPreview(e.target)
             }
@@ -301,7 +263,7 @@
       this.clearTimers()
       this.hidePreviewTimer = setTimeout(() => {
         this.tooltip.classList.add('hidden')
-        document.body.classList.remove('preview-active')
+        // 移除 preview-active 类的移除
         this.currentTarget = null
         this.isMouseOverTooltip = false
       }, 100)
@@ -595,7 +557,12 @@
   /* 当预览窗口显示时禁用背景滚动，但保持滚动条位置 */
   :global(body.preview-active) {
     overflow: hidden;
-    padding-right: var(--scrollbar-width);
+    /* 移除 padding-right: var(--scrollbar-width) */
+  }
+
+  /* 添加平滑过渡效果 */
+  :global(body) {
+    transition: padding-right 0.2s ease;
   }
 
   /* 优化预览窗口边框 */

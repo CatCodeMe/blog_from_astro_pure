@@ -116,7 +116,7 @@ export default defineConfig({
             hName: "a",
             hProperties: {
               href: `/${normalizedSlug}`,
-              class: "internal-link not-prose",
+              class: "inner-link not-prose",
             },
             hChildren: [
               {

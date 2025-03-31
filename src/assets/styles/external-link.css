@@ -1,21 +1,16 @@
 .external-link {
   position: relative;
   color: hsl(var(--primary));
-  transition: color 0.2s ease;
   display: inline-flex;
   align-items: center;
   gap: 0.2em;
   text-decoration: underline;
 }
 
-.external-link:hover {
-  color: hsl(var(--primary) / 0.8);
-}
-
 .external-link::after {
   content: '';
-  width: 1em;
-  height: 1em;
+  width: .8em;
+  height: .8em;
   background-color: currentColor;
   -webkit-mask-size: contain;
   mask-size: contain;
