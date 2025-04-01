@@ -31,14 +31,22 @@
     </div>
   </div>
   <div class='preview-content max-h-[70vh] overflow-y-auto p-4'></div>
-  <div class='resize-handle resize-handle-se absolute bottom-0 right-0 w-4 h-4 cursor-se-resize'>
+  <!-- 右下角拖拽手柄 -->
+  <div class='resize-handle resize-handle-se absolute bottom-0 right-0 w-20 h-6 cursor-se-resize'>
+    <svg
+      class='absolute bottom-1 right-1 w-4 h-4'
+      viewBox='0 0 16 16'
+      fill='none'
+      stroke='currentColor'
+      stroke-width='1.5'
+    >
+      <path d='M8 8L14 14M14 8L14 14L8 14' stroke-linecap='round' stroke-linejoin='round'></path>
+    </svg>
   </div>
+
+  <!-- 右侧拖拽手柄 -->
   <div
-    class='resize-handle resize-handle-e absolute right-0 top-1/2 w-2 h-8 -translate-y-1/2 cursor-e-resize'
-  >
-  </div>
-  <div
-    class='resize-handle resize-handle-s absolute bottom-0 left-1/2 w-8 h-2 -translate-x-1/2 cursor-s-resize'
+    class='resize-handle resize-handle-e absolute right-[-8px] top-[10%] w-4 h-[80%] cursor-e-resize'
   >
   </div>
 </div>
@@ -503,6 +511,41 @@
     transition: opacity 0.2s;
   }
 
+  .resize-handle-se {
+    opacity: 1;
+    transition: background-color 0.2s;
+  }
+
+  #linkpreview:hover .resize-handle {
+    opacity: 1;
+  }
+
+  .resize-handle-e {
+    background-color: hsl(var(--background));
+    border: 1px solid hsl(var(--border));
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .resize-handle-se:hover {
+    background-color: rgb(0 0 0 / 0.1);
+  }
+
+  .resize-handle-se svg {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* 右下角拖拽区域的hover效果 */
+  .resize-handle-se:hover {
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      transparent 75%,
+      hsl(var(--muted) / 0.1) 75%,
+      hsl(var(--muted) / 0.1) 100%
+    );
+  }
+
   #linkpreview:hover .resize-handle {
     opacity: 0.5;
   }
@@ -526,21 +569,13 @@
     transform: translateX(-50%);
   }
 
-  .resize-handle-s::after {
-    left: 0;
-    top: 50%;
-    width: 100%;
-    height: 2px;
-    transform: translateY(-50%);
-  }
-
-  .resize-handle-se::after {
+  /* .resize-handle-se::after {
     left: 50%;
     top: 50%;
     width: 8px;
     height: 8px;
     transform: translate(-50%, -50%) rotate(45deg);
-  }
+  } */
 
   /* .preview-content :global(.mermaid-wrapper) {
     border: 1px solid hsl(var(--border));
