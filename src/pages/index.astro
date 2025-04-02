@@ -201,6 +201,22 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
           <SkillLayout title='Backend' skills={backend} />
           <SkillLayout title='IDE' skills={ide} />
         </Section>
+
+        <!-- GitHub 活动图 -->
+        <Section title='GH-Activities' class='mt-20'>
+          <img
+            class='hidden w-full dark:block'
+            src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg'
+            alt='github contribution snake dark'
+            loading='lazy'
+          />
+          <img
+            class='block w-full dark:hidden'
+            src='https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg'
+            alt='github contribution snake light'
+            loading='lazy'
+          />
+        </Section>
       </div>
     </section>
   </main>

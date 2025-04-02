@@ -20,11 +20,17 @@ const headings = [
 <PageLayout title='Projects' {headings} info={{ slug: '/projects', hideComment: true }}>
   <p>Github Activities:</p>
   <p>
-    <Image
-      src='https://ghchart.rshah.org/da9d0c/catcodeme'
-      alt='github activities'
-      inferSize
-      loading='lazy'
+    <img
+      class="hidden dark:block"
+      src="https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake-dark.svg"
+      alt="github contribution snake dark"
+      loading="lazy"
+    />
+    <img
+      class="block dark:hidden"
+      src="https://raw.githubusercontent.com/CatCodeMe/catcodeme/output/github-contribution-grid-snake.svg"
+      alt="github contribution snake light"
+      loading="lazy"
     />
   </p>
   <p>
@@ -89,19 +95,21 @@ const headings = [
   </div>
 </PageLayout>
 
-<script
-  is:inline
-  type='module'
-  data-astro-rerun
-  define:vars={{ npmCDN: config.npmCDN, walineServer: config.integ.waline.server }}
->
-  const loadPageviewCount = async () => {
-    const pageview = await import(`${npmCDN}/@waline/client@v3/dist/pageview.js`)
-    pageview.pageviewCount({
-      serverURL: walineServer,
-      path: window.location.pathname
-    })
-  }
+{config.integ.waline.enable && (
+  <script
+    is:inline
+    type='module'
+    data-astro-rerun
+    define:vars={{ npmCDN: config.npmCDN, walineServer: config.integ.waline.server }}
+  >
+    const loadPageviewCount = async () => {
+      const pageview = await import(`${npmCDN}/@waline/client@v3/dist/pageview.js`)
+      pageview.pageviewCount({
+        serverURL: walineServer,
+        path: window.location.pathname
+      })
+    }
 
-  await loadPageviewCount()
-</script>
+    await loadPageviewCount()
+  </script>
+)}
