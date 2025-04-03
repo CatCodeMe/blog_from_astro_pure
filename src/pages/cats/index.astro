@@ -279,12 +279,10 @@ const sortedYears = Object.keys(catsByYear)
   :root {
     --scrollbar-width: 0px;
   }
-
   html.scroll-locked {
     overflow: hidden;
     padding-right: var(--scrollbar-width);
   }
-
   html.scroll-locked body {
     overflow: hidden;
   }
@@ -386,29 +384,20 @@ const sortedYears = Object.keys(catsByYear)
   }
 
   /* 响应式布局 */
+  /* 照片墙响应式布局 */
   @media (max-width: 1400px) {
     .photos-grid {
       grid-template-columns: repeat(6, 1fr);
     }
-
-    .photo-wall {
-      max-height: calc(100vh - 180px);
-    }
   }
-
   @media (max-width: 1200px) {
     .photos-grid {
       grid-template-columns: repeat(5, 1fr);
     }
   }
-
   @media (max-width: 900px) {
     .photos-grid {
       grid-template-columns: repeat(4, 1fr);
-    }
-
-    .photo-wall {
-      max-height: calc(100vh - 160px);
     }
   }
 
@@ -417,11 +406,9 @@ const sortedYears = Object.keys(catsByYear)
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
     }
-
     .photo-wall {
       gap: 2rem;
     }
-
     .year-title {
       font-size: 1.5rem;
     }
@@ -431,9 +418,7 @@ const sortedYears = Object.keys(catsByYear)
     .photos-grid {
       grid-template-columns: repeat(2, 1fr);
     }
-
     .photo-wall {
-      max-height: calc(100vh - 140px);
       padding-right: 0.5rem;
     }
   }
@@ -678,18 +663,16 @@ const sortedYears = Object.keys(catsByYear)
     }
   }
 
-  /* 添加一些基本的响应式设计 */
+  /* 响应式设计 */
   @media (max-width: 768px) {
     .modal-body {
       flex-direction: column;
     }
-
     .modal-content {
       padding: 1.5rem;
       width: 90%;
       max-width: 90vw;
     }
-
     .modal-image-container {
       max-height: 45vh;
     }
@@ -701,7 +684,6 @@ const sortedYears = Object.keys(catsByYear)
       width: 95%;
       max-width: 95vw;
     }
-
     .modal-image-container {
       max-height: 40vh;
     }
@@ -709,9 +691,8 @@ const sortedYears = Object.keys(catsByYear)
 </style>
 
 <script is:inline define:vars={{ catsByYear }}>
-  // 在页面加载后初始化
   document.addEventListener('DOMContentLoaded', () => {
-    // 获取模态窗口元素
+    // 获取元素和设置滚动条
     const modal = document.getElementById('photo-modal')
     const modalTitle = modal.querySelector('.modal-title')
     const modalPhoto = modal.querySelector('.modal-photo')
@@ -719,100 +700,57 @@ const sortedYears = Object.keys(catsByYear)
     const modalOverlay = modal.querySelector('.modal-overlay')
     const htmlEl = document.documentElement
 
-    // 计算滚动条宽度并存储为CSS变量
-    const scrollbarWidth = window.innerWidth - htmlEl.clientWidth
-    htmlEl.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`)
+    // 设置滚动条宽度变量
+    htmlEl.style.setProperty('--scrollbar-width', `${window.innerWidth - htmlEl.clientWidth}px`)
 
-    // 添加类来控制滚动锁定
-    function lockScroll() {
-      if (!htmlEl.classList.contains('scroll-locked')) {
-        htmlEl.classList.add('scroll-locked')
-      }
-    }
+    // 滚动锁定函数
+    const lockScroll = () => htmlEl.classList.add('scroll-locked')
+    const unlockScroll = () => htmlEl.classList.remove('scroll-locked')
 
-    function unlockScroll() {
-      htmlEl.classList.remove('scroll-locked')
-    }
-
-    // 打开模态窗口的函数
+    // 打开模态窗口函数
     function openModal(cat) {
       // 设置标题和图片
       modalTitle.textContent = cat.name
-
-      // 使用优化后的图片URL
-      if (cat.image.src) {
-        modalPhoto.src = cat.image.src
-      } else if (cat.image) {
-        // 如果图片对象没有src属性，可能是因为它还没有被处理
-        modalPhoto.src = cat.image
-      }
-
+      modalPhoto.src = cat.image.src || cat.image
       modalPhoto.alt = cat.name
 
-      // 清空并动态生成属性列表
+      // 生成属性列表
       const detailsContainer = document.getElementById('modal-details')
       detailsContainer.innerHTML = ''
 
-      // 遍历cat对象的所有属性，排除name和image
-      for (const [key, value] of Object.entries(cat)) {
-        // 跳过name和image属性，因为它们已经在其他地方显示
-        if (key === 'name' || key === 'image') continue
+      // 遍历属性并创建元素
+      Object.entries(cat).forEach(([key, value]) => {
+        if (key === 'name' || key === 'image') return
 
-        // 创建属性项
         const infoItem = document.createElement('div')
         infoItem.className = 'info-item'
 
-        // // 创建标签
-        // const label = document.createElement('span')
-        // label.className = 'label'
-        // label.textContent = key.charAt(0).toUpperCase() + key.slice(1) // 首字母大写
-
-        // 创建值
         const valueSpan = document.createElement('span')
         valueSpan.className = 'value'
+        valueSpan.textContent = key === 'date' ? new Date(value).toLocaleDateString() : value
 
-        // 如果是日期属性，格式化显示
-        if (key === 'date') {
-          valueSpan.textContent = new Date(value).toLocaleDateString()
-        } else {
-          valueSpan.textContent = value
-        }
-
-        // 添加到属性项
-        // infoItem.appendChild(label)
         infoItem.appendChild(valueSpan)
-
-        // 添加到容器
         detailsContainer.appendChild(infoItem)
-      }
+      })
 
-      // 锁定滚动
+      // 锁定滚动并显示模态窗口
       lockScroll()
-
-      // 显示模态窗口
       modal.classList.add('active')
     }
 
-    // 关闭模态窗口的函数
-    function closeModal() {
+    // 关闭模态窗口函数
+    const closeModal = () => {
       modal.classList.remove('active')
-
-      // 延时解锁滚动，等待模态窗口动画完成
-      setTimeout(() => {
-        unlockScroll()
-      }, 300)
+      setTimeout(unlockScroll, 300) // 延时解锁滚动
     }
 
-    // 绑定关闭按钮事件
+    // 绑定各种关闭事件
     closeButton.addEventListener('click', closeModal)
     modalOverlay.addEventListener('click', closeModal)
-
-    // 绑定 ESC 键关闭模态窗口
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeModal()
-      }
-    })
+    document.addEventListener(
+      'keydown',
+      (e) => e.key === 'Escape' && modal.classList.contains('active') && closeModal()
+    )
 
     // 绑定缩略图点击事件
     document.querySelectorAll('.photo-item').forEach((item) => {
@@ -820,10 +758,8 @@ const sortedYears = Object.keys(catsByYear)
         const [year, index] = item.getAttribute('data-photo-id').split('-')
         const cat = catsByYear[year][parseInt(index)]
 
-        // 打开模态窗口
+        // 打开模态窗口并更新选中状态
         openModal(cat)
-
-        // 更新选中状态
         document.querySelectorAll('.photo-item').forEach((i) => i.classList.remove('selected'))
         item.classList.add('selected')
       })
