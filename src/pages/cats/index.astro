@@ -1,0 +1,497 @@
+---
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+
+import PageLayout from '@/layouts/CommonPage.astro'
+import catAvatar from '@/assets/cats/avatar.jpeg'
+
+interface CatPhoto {
+  name: string
+  image: ImageMetadata
+  breed: string
+  date: string
+}
+
+const cats: CatPhoto[] = [
+  // 2024年 - 5张
+  {
+    name: '静物摄影 - 咖啡杯',
+    image: catAvatar,
+    breed: '静物',
+    date: '2024-01-15'
+  },
+  {
+    name: '城市建筑 - 天际线',
+    image: catAvatar,
+    breed: '建筑',
+    date: '2024-03-20'
+  },
+  {
+    name: '自然风光 - 日落',
+    image: catAvatar,
+    breed: '风光',
+    date: '2024-06-10'
+  },
+  {
+    name: '人像写真 - 侧光',
+    image: catAvatar,
+    breed: '人像',
+    date: '2024-08-05'
+  },
+  {
+    name: '街头抓拍 - 雨天',
+    image: catAvatar,
+    breed: '街拍',
+    date: '2024-12-25'
+  },
+  // 2025年 - 15张
+  {
+    name: '花卉特写 - 玫瑰',
+    image: catAvatar,
+    breed: '微距',
+    date: '2025-01-10'
+  },
+  {
+    name: '黑白人像 - 光影',
+    image: catAvatar,
+    breed: '人像',
+    date: '2025-01-20'
+  },
+  {
+    name: '城市夜景 - 霓虹',
+    image: catAvatar,
+    breed: '夜景',
+    date: '2025-02-05'
+  },
+  {
+    name: '美食摄影 - 甜点',
+    image: catAvatar,
+    breed: '美食',
+    date: '2025-02-15'
+  },
+  {
+    name: '风景长曝 - 瀑布',
+    image: catAvatar,
+    breed: '风光',
+    date: '2025-03-01'
+  },
+  {
+    name: '街头人文 - 市集',
+    image: catAvatar,
+    breed: '纪实',
+    date: '2025-03-15'
+  },
+  {
+    name: '建筑几何 - 对称',
+    image: catAvatar,
+    breed: '建筑',
+    date: '2025-04-05'
+  },
+  {
+    name: '自然生态 - 飞鸟',
+    image: catAvatar,
+    breed: '野生',
+    date: '2025-04-20'
+  },
+  {
+    name: '运动抓拍 - 篮球',
+    image: catAvatar,
+    breed: '运动',
+    date: '2025-05-10'
+  },
+  {
+    name: '静物构图 - 茶具',
+    image: catAvatar,
+    breed: '静物',
+    date: '2025-05-25'
+  },
+  {
+    name: '人像外拍 - 森林',
+    image: catAvatar,
+    breed: '人像',
+    date: '2025-06-08'
+  },
+  {
+    name: '城市建筑 - 老街',
+    image: catAvatar,
+    breed: '建筑',
+    date: '2025-06-20'
+  },
+  {
+    name: '微距世界 - 露珠',
+    image: catAvatar,
+    breed: '微距',
+    date: '2025-07-05'
+  },
+  {
+    name: '黄昏风光 - 剪影',
+    image: catAvatar,
+    breed: '风光',
+    date: '2025-07-15'
+  },
+  {
+    name: '街拍生活 - 地铁',
+    image: catAvatar,
+    breed: '街拍',
+    date: '2025-07-30'
+  }
+]
+
+// 按年份分组
+const catsByYear = cats.reduce(
+  (acc, cat) => {
+    const year = new Date(cat.date).getFullYear()
+    if (!acc[year]) acc[year] = []
+    acc[year].push(cat)
+    return acc
+  },
+  {} as Record<number, CatPhoto[]>
+)
+
+const sortedYears = Object.keys(catsByYear)
+  .map(Number)
+  .sort((a, b) => b - a)
+---
+
+<PageLayout title='Cat Gallery'>
+  <div class='gallery-container'>
+    <div class='photo-wall'>
+      {
+        sortedYears.map((year, yearIndex) => (
+          <>
+            <section class='year-section'>
+              <h2 class='year-title'>
+                {year}
+                <span class='photo-count'>({catsByYear[year].length} photos)</span>
+              </h2>
+              <div class='photos-grid'>
+                {catsByYear[year].map((cat, index) => (
+                  <div
+                    class='photo-item'
+                    style={`--delay: ${index * 0.1}s; --rotate: ${Math.random() * 16 - 8}deg;`}
+                    data-photo-id={`${year}-${index}`}
+                  >
+                    <div class='photo-frame'>
+                      <Image
+                        src={cat.image}
+                        alt={cat.name}
+                        width={100}
+                        height={100}
+                        class='cat-photo'
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+            {yearIndex < sortedYears.length - 1 && <div class='fancy-divider' />}
+          </>
+        ))
+      }
+    </div>
+
+    <div class='photo-detail'>
+      <div class='detail-content'>
+        <div class='image-container'>
+          <Image src={catAvatar} alt='' width={400} height={400} class='detail-photo' />
+        </div>
+        <div class='info-container'>
+          <h2 class='photo-name'></h2>
+          <div class='photo-info'>
+            <div class='info-item'>
+              <span class='label'>品种</span>
+              <span class='breed-value'></span>
+            </div>
+            <div class='info-item'>
+              <span class='label'>拍摄时间</span>
+              <span class='date-value'></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</PageLayout>
+
+<style>
+  .gallery-container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .photo-wall {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .year-section {
+    position: relative;
+  }
+
+  .year-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: hsl(var(--foreground));
+    text-align: center;
+  }
+
+  .photo-count {
+    font-size: 1rem;
+    opacity: 0.7;
+    margin-left: 1rem;
+  }
+
+  .photos-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .photo-item {
+    animation: fadeIn 0.5s ease-out forwards;
+    animation-delay: var(--delay);
+    opacity: 0;
+    transform: rotate(var(--rotate));
+    /* 确保宽高比1:1 */
+    aspect-ratio: 1;
+  }
+
+  .photo-frame {
+    background: white;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+
+    &:hover {
+      border-color: #666;
+      box-shadow:
+        0 0 0 2px white,
+        0 0 0 4px #666,
+        0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .cat-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .fancy-divider {
+    position: relative;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--foreground)), transparent);
+    margin: 2rem auto;
+    width: 80%;
+    opacity: 0.2;
+
+    &::before,
+    &::after {
+      content: '✧';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      color: hsl(var(--foreground));
+    }
+
+    &::before {
+      left: 20%;
+    }
+
+    &::after {
+      right: 20%;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px) rotate(var(--rotate));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) rotate(var(--rotate));
+    }
+  }
+
+  /* 响应式布局 */
+  @media (max-width: 1200px) {
+    .photos-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .photos-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    .photos-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .photo-wall {
+      gap: 3rem;
+    }
+
+    .year-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .fancy-divider {
+      width: 90%;
+
+      &::before {
+        left: 10%;
+      }
+
+      &::after {
+        right: 10%;
+      }
+    }
+  }
+
+  .photo-detail {
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+    padding: 2rem;
+    background: hsl(var(--background));
+    border-radius: 12px;
+    border: 1px solid hsl(var(--border));
+  }
+
+  .detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .image-container {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .detail-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .photo-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    margin: 0;
+  }
+
+  .photo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .label {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  @media (max-width: 1200px) {
+    .gallery-container {
+      grid-template-columns: 1fr 300px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .gallery-container {
+      grid-template-columns: 1fr;
+    }
+
+    .photo-detail {
+      display: none;
+    }
+  }
+</style>
+
+<script define:vars={{ catsByYear }}>
+  class PhotoDetail {
+    constructor() {
+      this.detail = document.querySelector('.photo-detail')
+      this.photoName = this.detail.querySelector('.photo-name')
+      this.breedValue = this.detail.querySelector('.breed-value')
+      this.dateValue = this.detail.querySelector('.date-value')
+      this.detailPhoto = this.detail.querySelector('.detail-photo')
+      this.catData = catsByYear
+
+      this.bindEvents()
+    }
+
+    bindEvents() {
+      document.querySelectorAll('.photo-item').forEach((item) => {
+        item.addEventListener('click', () => {
+          const [year, index] = item.getAttribute('data-photo-id').split('-')
+          this.showDetail(year, parseInt(index))
+
+          // 移除其他项的选中状态
+          document.querySelectorAll('.photo-item').forEach((i) => i.classList.remove('selected'))
+          // 添加当前项的选中状态
+          item.classList.add('selected')
+        })
+      })
+    }
+
+    showDetail(year, index) {
+      const cat = this.catData[year][index]
+      this.photoName.textContent = cat.name
+      this.breedValue.textContent = cat.breed
+      this.dateValue.textContent = new Date(cat.date).toLocaleDateString()
+      this.detailPhoto.src = cat.image.src
+      this.detailPhoto.alt = cat.name
+    }
+  }
+
+  new PhotoDetail()
+
+  // 默认选中第一张照片
+  document.querySelector('.photo-item')?.click()
+</script>
+
+<style>
+  .photo-item.selected .photo-frame {
+    border-color: hsl(var(--primary));
+    box-shadow:
+      0 0 0 2px white,
+      0 0 0 4px hsl(var(--primary)),
+      0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+</style>
