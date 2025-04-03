@@ -256,17 +256,7 @@ const sortedYears = Object.keys(catsByYear)
 </GalleryLayout>
 
 <style>
-  /* 滚动锁定相关样式 */
-  :root {
-    --scrollbar-width: 0px;
-  }
-  html.scroll-locked {
-    overflow: hidden;
-    padding-right: var(--scrollbar-width);
-  }
-  html.scroll-locked body {
-    overflow: hidden;
-  }
+  /* 移除滚动锁定相关样式 */
 
   .photo-wall {
     display: flex;
@@ -492,18 +482,21 @@ const sortedYears = Object.keys(catsByYear)
     left: 0;
     width: 100%;
     height: 100%;
-    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
     z-index: 1000;
     box-sizing: border-box;
   }
 
-  /* 确保模态窗口在滚动锁定时不受影响 */
-  html.scroll-locked .photo-modal {
-    padding-right: var(--scrollbar-width);
-  }
-
   .photo-modal.active {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .modal-overlay {
@@ -520,7 +513,7 @@ const sortedYears = Object.keys(catsByYear)
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(0.95);
     width: 70%;
     max-width: 70vw;
     max-height: 70vh;
@@ -532,9 +525,15 @@ const sortedYears = Object.keys(catsByYear)
     box-shadow:
       0 0 0 1px hsl(var(--border)),
       0 10px 25px rgba(0, 0, 0, 0.2);
-    animation: modalFadeIn 0.3s ease-out;
-    display: flex;
-    flex-direction: column;
+    opacity: 0;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .photo-modal.active .modal-content {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 
   .close-button {
@@ -571,6 +570,7 @@ const sortedYears = Object.keys(catsByYear)
     align-items: center;
     height: 100%;
     overflow: hidden; /* 防止滚动条出现 */
+    width: 100%;
   }
 
   @media (min-width: 768px) {
@@ -635,16 +635,7 @@ const sortedYears = Object.keys(catsByYear)
     font-weight: 500;
   }
 
-  @keyframes modalFadeIn {
-    from {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-    }
-  }
+  /* 移除不需要的动画关键帧 */
 
   /* 响应式设计 */
   @media (max-width: 768px) {
@@ -675,20 +666,12 @@ const sortedYears = Object.keys(catsByYear)
 
 <script is:inline define:vars={{ catsByYear }}>
   document.addEventListener('DOMContentLoaded', () => {
-    // 获取元素和设置滚动条
+    // 获取元素
     const modal = document.getElementById('photo-modal')
     const modalTitle = modal.querySelector('.modal-title')
     const modalPhoto = modal.querySelector('.modal-photo')
     const closeButton = modal.querySelector('.close-button')
     const modalOverlay = modal.querySelector('.modal-overlay')
-    const htmlEl = document.documentElement
-
-    // 设置滚动条宽度变量
-    htmlEl.style.setProperty('--scrollbar-width', `${window.innerWidth - htmlEl.clientWidth}px`)
-
-    // 滚动锁定函数
-    const lockScroll = () => htmlEl.classList.add('scroll-locked')
-    const unlockScroll = () => htmlEl.classList.remove('scroll-locked')
 
     // 打开模态窗口函数
     function openModal(cat) {
@@ -718,15 +701,13 @@ const sortedYears = Object.keys(catsByYear)
         detailsContainer.appendChild(infoItem)
       })
 
-      // 锁定滚动并显示模态窗口
-      lockScroll()
+      // 显示模态窗口
       modal.classList.add('active')
     }
 
     // 关闭模态窗口函数
     const closeModal = () => {
       modal.classList.remove('active')
-      setTimeout(unlockScroll, 300) // 延时解锁滚动
     }
 
     // 绑定各种关闭事件
