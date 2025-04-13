@@ -6,6 +6,7 @@ import _1h2 from '@/assets/cats/1-h-2.jpg'
 import _1h3 from '@/assets/cats/1-h-3.jpg'
 import _1h from '@/assets/cats/1-h.jpg'
 import _1m1 from '@/assets/cats/1-m-1.jpg'
+import _1m2 from '@/assets/cats/1-m-2.png'
 import _1m from '@/assets/cats/1-m.jpg'
 import _2111 from '@/assets/cats/2-1-1-1.jpg'
 import _2112 from '@/assets/cats/2-1-1-2.jpg'
@@ -29,144 +30,139 @@ import _u4 from '@/assets/cats/u-4.jpg'
  * Cat photo data collection
  */
 export const cats: CatPhoto[] = [
-  // 2024 年 - 5 张
   {
-    name: '静物摄影 - 咖啡杯',
+    name: '小花_1',
     image: _1h1,
-    breed: '',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['花猫']
   },
   {
-    name: '城市建筑 - 天际线',
+    name: '小花_2',
     image: _1h2,
-    breed: '建筑',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['花猫', '玩耳']
   },
   {
-    name: '自然风光 - 日落',
+    name: '小花_3',
     image: _1h3,
-    breed: '风光',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    desc: '小花的第三张照片'
   },
   {
-    name: '人像写真 - 侧光',
+    name: '小花',
     image: _1h,
-    breed: '人像',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['花猫', '主图'],
+    desc: '小花的主要照片'
   },
   {
-    name: '街头抓拍 - 雨天',
+    name: '月亮_1',
     image: _1m1,
-    breed: '街拍',
+    date: '2025-04-03',
+    tag: ['月亮猫']
+  },
+  {
+    name: '月亮_2',
+    image: _1m2,
     date: '2025-04-03'
   },
-  // 2025 年 - 15 张
   {
-    name: '花卉特写 - 玫瑰',
+    name: '月亮',
     image: _1m,
-    breed: '微距',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    desc: '月亮的主要照片'
   },
   {
-    name: '黑白人像 - 光影',
+    name: '大姐_1',
     image: _2111,
-    breed: '人像',
     date: '2025-04-03'
   },
   {
-    name: '城市夜景 - 霓虹',
+    name: '大姐_2',
     image: _2112,
-    breed: '夜景',
     date: '2025-04-03'
   },
   {
-    name: '美食摄影 - 甜点',
+    name: '大姐',
     image: _211,
-    breed: '美食',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['大姐猫']
   },
   {
-    name: '风景长曝 - 瀑布',
+    name: '大头',
     image: _221,
-    breed: '风光',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    desc: '大头猫的照片'
   },
   {
-    name: '街头人文 - 市集',
+    name: '老三_1',
     image: _2231,
-    breed: '纪实',
     date: '2025-04-03'
   },
   {
-    name: '建筑几何 - 对称',
+    name: '老三',
     image: _223,
-    breed: '建筑',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['老三猫']
   },
   {
-    name: '自然生态 - 飞鸟',
+    name: '老四_1',
     image: _2241,
-    breed: '野生',
     date: '2025-04-03'
   },
   {
-    name: '运动抓拍 - 篮球',
+    name: '老四_2',
     image: _2242,
-    breed: '运动',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    desc: '老四的第二张照片'
   },
   {
-    name: '静物构图 - 茶具',
+    name: '老四_3',
     image: _2243,
-    breed: '静物',
     date: '2025-04-03'
   },
   {
-    name: '人像外拍 - 森林',
+    name: '老四',
     image: _224,
-    breed: '人像',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['老四猫', '主图']
   },
   {
-    name: '城市建筑 - 老街',
+    name: '老六_1',
     image: _2261,
-    breed: '建筑',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['老六猫', '建筑']
   },
   {
-    name: '微距世界 - 露珠',
+    name: '老六',
     image: _226,
-    breed: '微距',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    desc: '老六的主要照片'
   },
   {
-    name: '黄昏风光 - 剪影',
+    name: '小孙子',
     image: _31,
-    breed: '风光',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['小孙子猫']
   },
   {
-    name: '街拍生活 - 地铁',
     image: _u1,
-    breed: '街拍',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    desc: '未命名的猫咪照片'
   },
   {
-    name: '城市建筑 - 老街',
     image: _u2,
-    breed: '建筑',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['未命名']
   },
   {
-    name: '微距世界 - 露珠',
     image: _u3,
-    breed: '微距',
     date: '2025-04-03'
   },
   {
-    name: '黄昏风光 - 剪影',
     image: _u4,
-    breed: '风光',
-    date: '2025-04-03'
+    date: '2025-04-03',
+    tag: ['未命名'],
+    desc: '最后一张未命名的照片'
   }
 ]

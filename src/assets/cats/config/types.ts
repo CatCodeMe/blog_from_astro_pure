@@ -4,10 +4,13 @@ import type { ImageMetadata } from 'astro'
  * Interface for cat photo data
  */
 export interface CatPhoto {
-  name: string
+  name?: string
   image: ImageMetadata
-  breed: string
   date: string
+  tag?: string[]
+  desc?: string
+  // Other optional properties can be added in the future
+  [key: string]: any
 }
 
 /**

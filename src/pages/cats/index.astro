@@ -31,7 +31,7 @@ const sortedYears = getSortedYears(catsByYear)
                 <div class='photo-frame'>
                   <Image
                     src={cat.image}
-                    alt={cat.name}
+                    alt={cat.name || 'Cat photo'}
                     width={300}
                     height={300}
                     class='cat-photo'
@@ -55,7 +55,6 @@ const sortedYears = getSortedYears(catsByYear)
   <div class='photo-modal' id='photo-modal'>
     <div class='modal-overlay'></div>
     <div class='modal-content'>
-      <button class='close-button' aria-label='关闭'>&times;</button>
       <div class='modal-body'>
         <div class='modal-image-container'>
           <img src='' alt='' class='modal-photo' loading='lazy' decoding='async' />
@@ -330,17 +329,15 @@ const sortedYears = getSortedYears(catsByYear)
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.95);
-    width: 70%;
-    max-width: 70vw;
-    max-height: 70vh;
+    width: 80%;
+    max-width: 80vw;
+    max-height: 80vh;
     background: hsl(var(--background));
-    border-radius: 12px;
-    padding: 2rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    padding: 1.5rem;
     z-index: 1001;
     overflow: hidden; /* 防止滚动条出现 */
-    box-shadow:
-      0 0 0 1px hsl(var(--border)),
-      0 10px 25px rgba(0, 0, 0, 0.2);
     opacity: 0;
     transition:
       opacity 0.3s ease,
@@ -352,32 +349,16 @@ const sortedYears = getSortedYears(catsByYear)
     transform: translate(-50%, -50%) scale(1);
   }
 
-  .close-button {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1.5rem;
-    background: hsl(var(--muted));
-    border: 1px solid hsl(var(--border));
-    color: hsl(var(--foreground));
-    cursor: pointer;
-    z-index: 1002;
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    padding: 0;
-    line-height: 1;
+  /* 模态窗口内容过渡效果 */
+  .modal-photo {
+    transition: opacity 0.3s ease;
   }
 
-  .close-button:hover {
-    background-color: hsl(var(--muted-foreground) / 0.1);
-    color: hsl(var(--primary));
-    border-color: hsl(var(--primary) / 0.3);
+  .modal-photo.transitioning {
+    opacity: 0;
   }
+
+  /* 关闭按钮已移除 */
 
   .modal-body {
     display: flex;
@@ -398,7 +379,6 @@ const sortedYears = getSortedYears(catsByYear)
 
   .modal-image-container {
     flex: 1;
-    border-radius: 12px;
     overflow: hidden;
     padding: 0.5rem;
     display: flex;
@@ -406,7 +386,7 @@ const sortedYears = getSortedYears(catsByYear)
     justify-content: center;
     height: 100%;
     max-height: 60vh;
-    background-color: hsl(var(--muted) / 0.3);
+    background-color: transparent;
   }
 
   .modal-photo {
@@ -416,8 +396,7 @@ const sortedYears = getSortedYears(catsByYear)
     height: auto;
     object-fit: contain;
     display: block;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
   }
 
   .modal-info {
@@ -442,13 +421,42 @@ const sortedYears = getSortedYears(catsByYear)
   }
 
   .info-item {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .label {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+    margin-bottom: 0.25rem;
+    display: none; /* 隐藏所有标签 */
   }
 
   .value {
     font-size: 1.1rem;
     color: hsl(var(--foreground));
     font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* 标签样式 */
+  .tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .tag-item {
+    background: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.2);
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
   }
 
   /* 移除不需要的动画关键帧 */
@@ -459,44 +467,65 @@ const sortedYears = getSortedYears(catsByYear)
       flex-direction: column;
     }
     .modal-content {
-      padding: 1.5rem;
-      width: 90%;
-      max-width: 90vw;
-    }
-    .modal-image-container {
-      max-height: 45vh;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .modal-content {
       padding: 1rem;
       width: 95%;
       max-width: 95vw;
     }
     .modal-image-container {
-      max-height: 40vh;
+      max-height: 50vh;
+      padding: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .modal-content {
+      padding: 0.75rem;
+      width: 98%;
+      max-width: 98vw;
+    }
+    .modal-image-container {
+      max-height: 45vh;
     }
   }
 </style>
 
-<script is:inline define:vars={{ catsByYear }}>
+<script is:inline define:vars={{ catsByYear, sortedYears }}>
   document.addEventListener('DOMContentLoaded', () => {
     // 获取元素
     const modal = document.getElementById('photo-modal')
     const modalTitle = modal.querySelector('.modal-title')
     const modalPhoto = modal.querySelector('.modal-photo')
-    const closeButton = modal.querySelector('.close-button')
+    const modalInfo = modal.querySelector('.modal-info')
     const modalOverlay = modal.querySelector('.modal-overlay')
 
+    // 当前选中的照片信息
+    let currentYear, currentIndex
+
+    // 获取所有照片项
+    const allPhotoItems = document.querySelectorAll('.photo-item')
+
     // 打开模态窗口函数
-    function openModal(cat) {
+    function openModal(cat, photoItem) {
+      // 获取当前照片的年份和索引
+      const photoId = photoItem.getAttribute('data-photo-id')
+      ;[currentYear, currentIndex] = photoId.split('-').map((val) => parseInt(val))
+
+      // 确保图片可见
+      modalPhoto.classList.remove('transitioning')
+
       // 设置标题和图片
-      modalTitle.textContent = cat.name
+      if (cat.name) {
+        modalTitle.textContent = cat.name
+        modalInfo.style.display = 'flex' // 显示信息区域
+      } else {
+        modalTitle.textContent = ''
+        modalInfo.style.display = 'none' // 隐藏信息区域
+      }
+
       // 对于普通的img标签，我们需要直接使用优化后的图片URL
       // 添加判断防止图片源格式不符合预期
       modalPhoto.src = cat.image.src || (typeof cat.image === 'string' ? cat.image : '')
-      modalPhoto.alt = cat.name
+      modalPhoto.alt = cat.name || 'Cat photo'
 
       // 生成属性列表
       const detailsContainer = document.getElementById('modal-details')
@@ -504,46 +533,220 @@ const sortedYears = getSortedYears(catsByYear)
 
       // 遍历属性并创建元素
       Object.entries(cat).forEach(([key, value]) => {
-        if (key === 'name' || key === 'image') return
+        // 跳过name、image和空值
+        if (key === 'name' || key === 'image' || !value) return
 
         const infoItem = document.createElement('div')
         infoItem.className = 'info-item'
 
+        // 创建标签元素
+        const labelSpan = document.createElement('span')
+        labelSpan.className = 'label'
+        labelSpan.style.display = 'none' // 隐藏所有属性名称
+
+        // 创建值元素
         const valueSpan = document.createElement('span')
         valueSpan.className = 'value'
-        valueSpan.textContent = key === 'date' ? new Date(value).toLocaleDateString() : value
 
+        // 根据不同的属性类型处理显示
+        if (key === 'date') {
+          // 只显示日期
+          valueSpan.textContent = new Date(value).toLocaleDateString()
+        } else if (key === 'tag' && Array.isArray(value)) {
+          // 创建标签容器
+          const tagContainer = document.createElement('div')
+          tagContainer.className = 'tag-container'
+
+          // 为每个标签创建标签元素
+          value.forEach((tag) => {
+            const tagItem = document.createElement('span')
+            tagItem.className = 'tag-item'
+            tagItem.textContent = tag
+            tagContainer.appendChild(tagItem)
+          })
+
+          // 添加标签容器而不是纯文本
+          valueSpan.textContent = ''
+          valueSpan.appendChild(tagContainer)
+        } else if (typeof value === 'string') {
+          valueSpan.textContent = value
+        } else {
+          valueSpan.textContent = JSON.stringify(value)
+        }
+
+        infoItem.appendChild(labelSpan)
         infoItem.appendChild(valueSpan)
         detailsContainer.appendChild(infoItem)
       })
 
       // 显示模态窗口
       modal.classList.add('active')
+
+      // 更新选中状态
+      allPhotoItems.forEach((item) => item.classList.remove('selected'))
+      photoItem.classList.add('selected')
     }
 
     // 关闭模态窗口函数
     const closeModal = () => {
       modal.classList.remove('active')
+      currentYear = null
+      currentIndex = null
     }
 
-    // 绑定各种关闭事件
-    closeButton.addEventListener('click', closeModal)
+    // 切换到下一张或上一张照片
+    function navigatePhotos(direction) {
+      if (currentYear === null || currentIndex === null) return
+
+      // 添加过渡效果
+      modalPhoto.classList.add('transitioning')
+
+      // 延迟加载新照片，等待淡出效果完成
+      setTimeout(() => {
+        const currentYearPhotos = catsByYear[currentYear]
+        let newIndex = currentIndex + direction
+        let newYear = currentYear
+
+        // 如果超出当前年份的照片范围，则切换到下一个/上一个年份
+        if (newIndex < 0 || newIndex >= currentYearPhotos.length) {
+          const yearIndex = sortedYears.indexOf(currentYear)
+
+          if (direction > 0 && yearIndex > 0) {
+            // 向后导航到上一年（因为年份是降序排列的）
+            newYear = sortedYears[yearIndex - 1]
+            newIndex = 0
+          } else if (direction < 0 && yearIndex < sortedYears.length - 1) {
+            // 向前导航到下一年（因为年份是降序排列的）
+            newYear = sortedYears[yearIndex + 1]
+            newIndex = catsByYear[newYear].length - 1
+          } else {
+            // 如果已经是第一张或最后一张照片，则循环到另一端
+            if (direction > 0) {
+              newYear = sortedYears[sortedYears.length - 1]
+              newIndex = 0
+            } else {
+              newYear = sortedYears[0]
+              newIndex = catsByYear[newYear].length - 1
+            }
+          }
+        }
+
+        // 找到对应的照片元素
+        const photoItem = document.querySelector(`[data-photo-id="${newYear}-${newIndex}"]`)
+        if (photoItem) {
+          const cat = catsByYear[newYear][newIndex]
+
+          // 更新图片和信息
+          if (cat.name) {
+            modalTitle.textContent = cat.name
+            modalInfo.style.display = 'flex'
+          } else {
+            modalTitle.textContent = ''
+            modalInfo.style.display = 'none'
+          }
+
+          // 更新图片源
+          modalPhoto.src = cat.image.src || (typeof cat.image === 'string' ? cat.image : '')
+          modalPhoto.alt = cat.name || 'Cat photo'
+
+          // 更新属性列表
+          const detailsContainer = document.getElementById('modal-details')
+          detailsContainer.innerHTML = ''
+
+          // 遍历属性并创建元素
+          Object.entries(cat).forEach(([key, value]) => {
+            // 跳过name、image和空值
+            if (key === 'name' || key === 'image' || !value) return
+
+            const infoItem = document.createElement('div')
+            infoItem.className = 'info-item'
+
+            // 创建标签元素
+            const labelSpan = document.createElement('span')
+            labelSpan.className = 'label'
+            labelSpan.style.display = 'none' // 隐藏所有属性名称
+
+            // 创建值元素
+            const valueSpan = document.createElement('span')
+            valueSpan.className = 'value'
+
+            // 根据不同的属性类型处理显示
+            if (key === 'date') {
+              // 只显示日期
+              valueSpan.textContent = new Date(value).toLocaleDateString()
+            } else if (key === 'tag' && Array.isArray(value)) {
+              // 创建标签容器
+              const tagContainer = document.createElement('div')
+              tagContainer.className = 'tag-container'
+
+              // 为每个标签创建标签元素
+              value.forEach((tag) => {
+                const tagItem = document.createElement('span')
+                tagItem.className = 'tag-item'
+                tagItem.textContent = tag
+                tagContainer.appendChild(tagItem)
+              })
+
+              // 添加标签容器而不是纯文本
+              valueSpan.textContent = ''
+              valueSpan.appendChild(tagContainer)
+            } else if (typeof value === 'string') {
+              valueSpan.textContent = value
+            } else {
+              valueSpan.textContent = JSON.stringify(value)
+            }
+
+            infoItem.appendChild(labelSpan)
+            infoItem.appendChild(valueSpan)
+            detailsContainer.appendChild(infoItem)
+          })
+
+          // 更新当前索引
+          currentYear = newYear
+          currentIndex = newIndex
+
+          // 更新选中状态
+          allPhotoItems.forEach((item) => item.classList.remove('selected'))
+          photoItem.classList.add('selected')
+
+          // 恢复图片可见性
+          setTimeout(() => {
+            modalPhoto.classList.remove('transitioning')
+          }, 50) // 给浏览器一点时间来应用新的图片源
+        }
+      }, 150) // 等待淡出效果完成
+    }
+
+    // 绑定关闭事件
     modalOverlay.addEventListener('click', closeModal)
-    document.addEventListener(
-      'keydown',
-      (e) => e.key === 'Escape' && modal.classList.contains('active') && closeModal()
-    )
+
+    // 键盘事件处理
+    document.addEventListener('keydown', (e) => {
+      if (!modal.classList.contains('active')) return
+
+      switch (e.key) {
+        case 'Escape':
+          closeModal()
+          break
+        case 'ArrowRight':
+        case 'ArrowDown':
+          navigatePhotos(1) // 下一张
+          e.preventDefault()
+          break
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          navigatePhotos(-1) // 上一张
+          e.preventDefault()
+          break
+      }
+    })
 
     // 绑定缩略图点击事件
-    document.querySelectorAll('.photo-item').forEach((item) => {
+    allPhotoItems.forEach((item) => {
       item.addEventListener('click', () => {
         const [year, index] = item.getAttribute('data-photo-id').split('-')
         const cat = catsByYear[year][parseInt(index)]
-
-        // 打开模态窗口并更新选中状态
-        openModal(cat)
-        document.querySelectorAll('.photo-item').forEach((i) => i.classList.remove('selected'))
-        item.classList.add('selected')
+        openModal(cat, item)
       })
     })
   })
