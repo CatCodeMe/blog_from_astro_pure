@@ -79,6 +79,9 @@ bunfig.toml
 /src/content/blog/test.*
 /test/
 
+.idea/*
+.vscode/*
+
 
 .vscode
 .idea
