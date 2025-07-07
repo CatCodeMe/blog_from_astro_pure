@@ -1,8 +1,7 @@
----
+--- 
 import { Mermaid } from '@/custom/components/advanced'
 import { Footer, Header, ThemeProvider } from '@/custom/components/basic'
 
-import type { SiteMeta } from 'astro-pure/types'
 import BaseHead from '@/components/BaseHead.astro'
 import config from '@/site-config'
 
@@ -29,70 +28,14 @@ const { title, description = config.description } = Astro.props
     <ThemeProvider />
   </head>
 
-  <body class='flex justify-center bg-background text-foreground'>
-    <div class='w-full max-w-[70rem] px-4 sm:px-7 lg:px-10'>
+  <body class="bg-background text-foreground">
+    <div class="w-full max-w-4xl mx-auto px-4 sm:px-7 lg:px-10">
       <Header />
-      
-      <!-- 页面标题 -->
-      <h1 class='mt-6 text-2xl font-medium sm:mb-2 sm:text-3xl'>{title}</h1>
-      
-      <!-- 主要内容 -->
-      <main class='my-6'>
+      <main>
         <slot />
       </main>
-      
-      <Mermaid />
       <Footer />
     </div>
-
-    <!-- 回到顶部按钮 -->
-    <button
-      aria-label='Back to Top'
-      class='z-90 group fixed bottom-8 end-4 flex h-10 w-10 translate-y-28 items-center justify-center rounded-full border-2 border-transparent bg-muted text-muted-foreground opacity-0 transition-all duration-300 hover:border-border/75 data-[show=true]:translate-y-0 data-[show=true]:opacity-100 sm:end-8 sm:h-12 sm:w-12'
-      data-show='false'
-      id='to-top-btn'
-    >
-      <svg
-        xmlns='http://www.w3.org/2000/svg'
-        width='24'
-        height='24'
-        viewBox='0 0 24 24'
-        fill='none'
-        stroke='currentColor'
-        stroke-width='2'
-        stroke-linecap='round'
-        stroke-linejoin='round'
-        class='opacity-100'
-      >
-        <polyline points='18 15 12 9 6 15'></polyline>
-      </svg>
-    </button>
+    <Mermaid />
   </body>
 </html>
-
-<script is:inline>
-  // 回到顶部按钮的逻辑
-  document.addEventListener('DOMContentLoaded', () => {
-    const scrollBtn = document.getElementById('to-top-btn')
-    
-    // 显示/隐藏按钮
-    function toggleScrollButton() {
-      if (window.scrollY > 300) {
-        scrollBtn.dataset.show = 'true'
-      } else {
-        scrollBtn.dataset.show = 'false'
-      }
-    }
-    
-    // 监听滚动事件
-    window.addEventListener('scroll', toggleScrollButton)
-    
-    // 点击回到顶部
-    scrollBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    })
-    
-    // 初始检查
-    toggleScrollButton()
-  })
-</script>
