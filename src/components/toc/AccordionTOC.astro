@@ -1,0 +1,375 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  position?: 'left' | 'right';
+  class?: string;
+}
+
+const { headings, position = 'left', class: className } = Astro.props;
+console.log('head11', headings);
+---
+
+<div class:list={["toc-accordion", className, position]} id="toc">
+    <div class="toc-progress">
+        <div class="toc-progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="toc-lines" id="toc-lines">
+    </div>
+    <div class="toc-full-menu" id="toc-full-menu">
+        <div class="toc-full-menu-content" id="toc-full-menu-content">
+        </div>
+    </div>
+</div>
+
+<style>
+    .toc-accordion {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1000;
+        display: block !important;
+        background: rgba(255,255,255,0.95);
+        box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+        border-radius: 12px;
+        padding: 8px 0;
+    }
+
+    .toc-accordion.left {
+        left: 1rem;
+    }
+
+    .toc-accordion.right {
+        right: 1rem;
+    }
+
+    .toc-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 20px 0;
+        background: transparent;
+        min-width: 44px;
+        min-height: 120px;
+    }
+
+    .toc-accordion.right .toc-lines {
+        align-items: flex-end;
+    }
+
+    /* 优化 toc-line 样式为原型效果，仅支持 h1~h3 */
+    :global(.toc-line) {
+        position: relative;
+        height: 2px;
+        background: #cbd5e0;
+        border-radius: 1px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0.6;
+        margin: 2px 0;
+    }
+    :global(.toc-line[data-level="1"]) { width: 40px; background: #3b82f6; }
+    :global(.toc-line[data-level="2"]) { width: 30px; background: #10b981; }
+    :global(.toc-line[data-level="3"]) { width: 22px; background: #f59e0b; }
+    :global(.toc-line:hover) {
+        opacity: 1;
+        transform: scaleY(2);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    :global(.toc-line.active) {
+        opacity: 1;
+        transform: scaleY(3);
+        box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+    }
+
+    /* progress 进度条样式（原型同步） */
+    .toc-progress {
+        position: absolute;
+        right: 50px;
+        top: 25%;
+        width: 2px;
+        height: 50%;
+        background: #e2e8f0;
+        border-radius: 1px;
+    }
+    .toc-progress-fill {
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(180deg, #3b82f6 0%, #10b981 100%);
+        border-radius: 1px;
+        transition: height 0.3s ease;
+    }
+    /* menu 弹出菜单样式（全局提升优先级，严格还原原型，修复中文乱码） */
+    :global(.toc-full-menu) {
+        position: absolute !important;
+        left: calc(100% + 20px) !important;
+        top: 0 !important;
+        background: var(--toc-menu-bg, rgba(30, 30, 30, 0.95)) !important;
+        color: #fff !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateX(20px) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        min-width: 200px !important;
+        max-width: 300px !important;
+        max-height: 60vh !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+        z-index: 100 !important;
+        overflow-y: auto !important;
+        padding: 0 !important;
+        scrollbar-width: thin !important;
+        scrollbar-color: rgba(255,255,255,0.3) transparent !important;
+        font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif !important;
+        word-break: break-all !important;
+    }
+    :global(.toc-full-menu-content) {
+        padding: 15px !important;
+    }
+    :global(.toc-full-menu)::-webkit-scrollbar { width: 6px; }
+    :global(.toc-full-menu)::-webkit-scrollbar-track { background: transparent; }
+    :global(.toc-full-menu)::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 3px; }
+    :global(.toc-full-menu)::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
+    :global(.toc-full-menu)::after {
+        content: '';
+        position: absolute;
+        left: 100%;
+        top: 20px;
+        border: 8px solid transparent;
+        border-left-color: var(--toc-menu-bg, rgba(30, 30, 30, 0.95));
+    }
+    :global(.toc-accordion.right .toc-full-menu) {
+        left: auto !important;
+        right: calc(100% + 20px) !important;
+        transform: translateX(-20px) !important;
+    }
+    :global(.toc-accordion.right .toc-full-menu)::after {
+        left: auto;
+        right: 100%;
+        border-left-color: transparent;
+        border-right-color: var(--toc-menu-bg, rgba(30, 30, 30, 0.95));
+    }
+    :global(.toc-accordion:hover .toc-full-menu) {
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+        pointer-events: auto !important;
+    }
+    :global(.toc-menu-item) {
+        padding: 6px 8px !important;
+        margin: 2px 0 !important;
+        cursor: pointer !important;
+        border-radius: 4px !important;
+        transition: background-color 0.2s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        font-size: 13px !important;
+        font-weight: 400 !important;
+        font-family: inherit !important;
+    }
+    :global(.toc-menu-item:hover) {
+        background: rgba(255,255,255,0.1) !important;
+    }
+    :global(.toc-menu-item.active) {
+        background: rgba(59, 130, 246, 0.3) !important;
+        border-left: 3px solid #3b82f6 !important;
+    }
+    :global(.toc-menu-item.level-1) {
+        font-weight: 600 !important;
+        margin-left: 0 !important;
+    }
+    :global(.toc-menu-item.level-2) {
+        margin-left: 15px !important;
+        font-size: 12px !important;
+    }
+    :global(.toc-menu-item.level-3) {
+        margin-left: 30px !important;
+        font-size: 11px !important;
+        opacity: 0.9 !important;
+    }
+    :global(.toc-menu-level-indicator) {
+        display: inline-block !important;
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        margin-right: 8px !important;
+        flex-shrink: 0 !important;
+    }
+    :global(.toc-menu-item.level-1 .toc-menu-level-indicator) { background: #3b82f6 !important; }
+    :global(.toc-menu-item.level-2 .toc-menu-level-indicator) { background: #10b981 !important; }
+    :global(.toc-menu-item.level-3 .toc-menu-level-indicator) { background: #f59e0b !important; }
+    /* 响应式隐藏 */
+    @media (max-width: 1023px) {
+        .toc-accordion { display: none !important; }
+    }
+
+    html { scroll-behavior: smooth; }
+</style>
+
+<script define:vars={{ headings }}>
+    class AccordionTOC {
+        constructor(headingsData) {
+            this.toc = document.getElementById('toc');
+            this.tocLines = document.getElementById('toc-lines');
+            this.tocFullMenu = document.getElementById('toc-full-menu');
+            this.tocFullMenuContent = document.getElementById('toc-full-menu-content');
+            this.progressFill = document.getElementById('progress-fill');
+            this.headingsData = headingsData;
+            this.headings = [];
+            this.currentActiveIndex = -1;
+            this.isMenuVisible = false;
+            this.init();
+        }
+        init() {
+            this.collectHeadings();
+            if (this.headings.length === 0) {
+                if(this.toc) this.toc.style.display = 'none';
+                return;
+            }
+            this.generateTOC();
+            this.bindEvents();
+            this.updateActiveState();
+            this.updateProgress();
+        }
+        collectHeadings() {
+            // 优化：无论 DOM 是否存在都渲染横线和菜单
+            this.headings = this.headingsData.map((heading, idx) => {
+                const element = document.getElementById(heading.slug);
+                return {
+                    element: element,
+                    level: heading.depth,
+                    text: heading.text,
+                    id: heading.slug || `heading-${idx}`,
+                    top: element ? element.offsetTop : 0
+                };
+            });
+        }
+        generateTOC() {
+            this.tocLines.innerHTML = '';
+            // 只渲染 h1~h3 横线
+            this.headings.forEach((heading, index) => {
+                if (heading.level > 3) return;
+                const line = document.createElement('div');
+                line.className = 'toc-line';
+                line.setAttribute('data-level', heading.level);
+                line.setAttribute('data-target', heading.id);
+                line.setAttribute('data-index', index);
+                this.tocLines.appendChild(line);
+            });
+            this.generateFullMenu();
+        }
+        generateFullMenu() {
+            this.tocFullMenuContent.innerHTML = '';
+            this.headings.forEach((heading, index) => {
+                const menuItem = document.createElement('div');
+                menuItem.className = `toc-menu-item level-${heading.level}`;
+                menuItem.setAttribute('data-target', heading.id);
+                menuItem.setAttribute('data-index', index);
+                menuItem.innerHTML = `<span class="toc-menu-level-indicator"></span> <span class="toc-menu-text">${heading.text}</span>`;
+                this.tocFullMenuContent.appendChild(menuItem);
+            });
+            // 事件只绑定一次
+            if (!this._menuClickBound) {
+                this.tocFullMenuContent.addEventListener('click', (e) => {
+                    const menuItem = e.target.closest('.toc-menu-item');
+                    if (menuItem) {
+                        const targetId = menuItem.getAttribute('data-target');
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+                this._menuClickBound = true;
+            }
+        }
+        bindEvents() {
+            this.tocLines.addEventListener('click', (e) => {
+                const line = e.target.closest('.toc-line');
+                if (line) {
+                    const targetId = line.getAttribute('data-target');
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+            this.toc.addEventListener('mouseenter', () => {
+                this.isMenuVisible = true;
+                this.scrollToActiveItem();
+            });
+            this.toc.addEventListener('mouseleave', () => { this.isMenuVisible = false; });
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        this.updateActiveState();
+                        this.updateProgress();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+            window.addEventListener('resize', () => { this.recalculatePositions(); });
+        }
+        scrollToActiveItem() {
+            if (this.currentActiveIndex >= 0 && this.isMenuVisible) {
+                const activeMenuItem = this.tocFullMenuContent.children[this.currentActiveIndex];
+                if (activeMenuItem) {
+                    // 立即定位，无需延迟
+                    const menuHeight = this.tocFullMenu.clientHeight;
+                    const itemTop = activeMenuItem.offsetTop;
+                    const itemHeight = activeMenuItem.clientHeight;
+                    const idealScrollTop = itemTop - (menuHeight / 2) + (itemHeight / 2);
+                    const maxScrollTop = this.tocFullMenuContent.scrollHeight - menuHeight;
+                    const scrollTop = Math.max(0, Math.min(idealScrollTop, maxScrollTop));
+                    this.tocFullMenu.scrollTop = scrollTop;
+                }
+            }
+        }
+        recalculatePositions() {
+            this.headings.forEach(heading => { heading.top = heading.element ? heading.element.offsetTop : 0; });
+            this.updateActiveState();
+        }
+        updateActiveState() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const offset = 100;
+            let activeIndex = -1;
+            for (let i = 0; i < this.headings.length; i++) {
+                if (this.headings[i].element && scrollTop + offset >= this.headings[i].top) {
+                    activeIndex = i;
+                } else if (!this.headings[i].element && i === 0) {
+                    activeIndex = 0;
+                } else {
+                    break;
+                }
+            }
+            if (activeIndex === -1 && scrollTop < 100) { activeIndex = 0; }
+            if (activeIndex !== this.currentActiveIndex) {
+                const lines = this.tocLines.querySelectorAll('.toc-line');
+                lines.forEach((line, index) => { line.classList.toggle('active', index === activeIndex); });
+                const menuItems = this.tocFullMenuContent.querySelectorAll('.toc-menu-item');
+                menuItems.forEach((item, index) => { item.classList.toggle('active', index === activeIndex); });
+                this.currentActiveIndex = activeIndex;
+                if (this.isMenuVisible) {
+                    this.scrollToActiveItem();
+                }
+            }
+        }
+        updateProgress() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = Math.min(Math.max(scrollTop / documentHeight, 0), 1);
+            this.progressFill.style.height = `${progress * 100}%`;
+        }
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => new AccordionTOC(headings));
+    } else {
+        new AccordionTOC(headings);
+    }
+</script>

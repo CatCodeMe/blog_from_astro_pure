@@ -59,28 +59,28 @@
   }
 
   class LinkPreview {
-    private tooltip
-    private header
-    private content
-    private pinButton
-    private closeButton
-    private gotoButton
-    private currentHref = ''
-    private showPreviewTimer
-    private hidePreviewTimer
-    private isPinned = false
-    private isDragging = false
-    private dragOffset = { x: 0, y: 0 }
-    private isResizing = false
-    private resizeDirection = ''
-    private resizeHandles
-    private titleElement
-    private readonly MAX_CACHE_SIZE = 10
-    private cachedContent = new Map<string, string>()
-    private currentTarget = null
-    private mousePosition = { x: 0, y: 0 }
-    private isMouseOverTooltip = false
-    private readonly HIDE_THRESHOLD = 100 // 鼠标离开链接的阈值距离
+    private tooltip: HTMLElement | null = null
+    private header: HTMLElement | null = null
+    private content: HTMLElement | null = null
+    private pinButton: HTMLButtonElement | null = null
+    private closeButton: HTMLButtonElement | null = null
+    private gotoButton: HTMLButtonElement | null = null
+    private currentHref: string = ''
+    private showPreviewTimer: ReturnType<typeof setTimeout> | null = null
+    private hidePreviewTimer: ReturnType<typeof setTimeout> | null = null
+    private isPinned: boolean = false
+    private isDragging: boolean = false
+    private dragOffset: { x: number; y: number } = { x: 0, y: 0 }
+    private isResizing: boolean = false
+    private resizeDirection: string = ''
+    private resizeHandles: HTMLElement[] = []
+    private titleElement: HTMLElement | null = null
+    private readonly MAX_CACHE_SIZE: number = 10
+    private cachedContent: Map<string, string> = new Map<string, string>()
+    private currentTarget: HTMLAnchorElement | null = null
+    private mousePosition: { x: number; y: number } = { x: 0, y: 0 }
+    private isMouseOverTooltip: boolean = false
+    private readonly HIDE_THRESHOLD: number = 100 // 鼠标离开链接的阈值距离
 
     constructor() {
       if (window.matchMedia('(max-width: 768px)').matches) return
@@ -121,7 +121,7 @@
     checkShouldHide() {
       if (this.isPinned) return
       if (!this.currentTarget) return
-      if (this.tooltip.classList.contains('hidden')) return
+      if (!this.tooltip || this.tooltip.classList.contains('hidden')) return
 
       const targetRect = this.currentTarget.getBoundingClientRect()
       const tooltipRect = this.tooltip.getBoundingClientRect()
@@ -159,13 +159,13 @@
     }
 
     bindEvents() {
-      document.addEventListener('mouseover', (e) => {
+      document.addEventListener('mouseover', (e: MouseEvent) => {
         // 检查链接是否在 main 标签内
-        const link = e.target.closest('article a.inner-link')
+        const link = (e.target as HTMLElement)?.closest('article a.inner-link') as HTMLAnchorElement | null
         if (!link) return
 
         // 忽略预览窗口内的链接
-        if (this.tooltip.contains(link)) return
+        if (this.tooltip && this.tooltip.contains(link)) return
 
         // 非 pin 状态下，相同链接不重复显示
         if (!this.isPinned && link === this.currentTarget) return
@@ -177,7 +177,7 @@
         // 阻止默认的链接点击行为
         link.addEventListener(
           'click',
-          (e) => {
+          (e: MouseEvent) => {
             // 如果按住了 Ctrl/Command 键，使用默认行为（新标签页打开）
             if (e.ctrlKey || e.metaKey) return
 
@@ -193,21 +193,21 @@
     }
 
     setupControls() {
-      this.pinButton.addEventListener('click', () => {
+      this.pinButton?.addEventListener('click', () => {
         this.isPinned = !this.isPinned
-        this.pinButton.classList.toggle('text-primary', this.isPinned)
-        this.tooltip.classList.toggle('pinned', this.isPinned)
+        this.pinButton?.classList.toggle('text-primary', this.isPinned)
+        this.tooltip?.classList.toggle('pinned', this.isPinned)
       })
 
-      this.closeButton.addEventListener('click', () => {
-        this.tooltip.classList.add('hidden')
+      this.closeButton?.addEventListener('click', () => {
+        this.tooltip?.classList.add('hidden')
         this.currentTarget = null
         this.isPinned = false
-        this.tooltip.classList.remove('pinned')
-        this.pinButton.classList.remove('text-primary')
+        this.tooltip?.classList.remove('pinned')
+        this.pinButton?.classList.remove('text-primary')
       })
 
-      this.gotoButton.addEventListener('click', () => {
+      this.gotoButton?.addEventListener('click', () => {
         if (this.currentHref) {
           window.location.href = this.currentHref
         }
@@ -219,7 +219,7 @@
       if (this.hidePreviewTimer) clearTimeout(this.hidePreviewTimer)
     }
 
-    async showLinkPreview(e) {
+    async showLinkPreview(e: MouseEvent) {
       const link = this.currentTarget
       if (!link) return
 
@@ -229,27 +229,31 @@
       this.clearTimers()
       this.currentHref = href
 
-      this.gotoButton.onclick = () => (window.location.href = href)
+      if (this.gotoButton) {
+        this.gotoButton.onclick = () => (window.location.href = href)
+      }
 
       const title = link.getAttribute('title') || link.textContent || href
-      this.titleElement.textContent = title
+      if (this.titleElement) {
+        this.titleElement.textContent = title
+      }
 
       this.showPreviewTimer = setTimeout(async () => {
         try {
           const isExternalLink = !href.startsWith(window.location.origin) && !href.startsWith('/')
           if (isExternalLink) return
 
-          let content = await this.getPreviewContent(href)
-          if (!content) return
+          let contentHtml = await this.getPreviewContent(href)
+          if (!contentHtml) return
 
-          if (this.currentTarget === link) {
+          if (this.currentTarget === link && this.content) {
             this.content.style.opacity = '0'
-            this.content.innerHTML = content.innerHTML
+            this.content.innerHTML = contentHtml
 
-            this.tooltip.classList.remove('hidden')
+            this.tooltip?.classList.remove('hidden')
             // 移除 preview-active 类的添加
             if (!this.isPinned) {
-              this.positionPreview(e.target)
+              this.positionPreview(e.target as HTMLElement)
             }
 
             // 初始化并渲染 mermaid 图表
@@ -257,7 +261,9 @@
             await this.renderMermaidDiagrams(this.content)
 
             requestAnimationFrame(() => {
-              this.content.style.opacity = '1'
+              if (this.content) {
+                this.content.style.opacity = '1'
+              }
             })
           }
         } catch (error) {
@@ -271,18 +277,18 @@
 
       this.clearTimers()
       this.hidePreviewTimer = setTimeout(() => {
-        this.tooltip.classList.add('hidden')
+        this.tooltip?.classList.add('hidden')
         // 移除 preview-active 类的移除
         this.currentTarget = null
         this.isMouseOverTooltip = false
       }, 100)
     }
 
-    private async getPreviewContent(href) {
+    private async getPreviewContent(href: string): Promise<string | null> {
       // 检查缓存
       if (this.cachedContent.has(href)) {
         // 移动到缓存末尾（最近使用）
-        const content = this.cachedContent.get(href)
+        const content = this.cachedContent.get(href) as string
         this.cachedContent.delete(href)
         this.cachedContent.set(href, content)
         return content
@@ -291,17 +297,17 @@
       const response = await fetch(href)
       const html = await response.text()
       const doc = new DOMParser().parseFromString(html, 'text/html')
-      const content = doc.querySelector('main')?.cloneNode(true)
+      const mainContent = doc.querySelector('main')
 
-      if (content) {
+      if (mainContent) {
         // 移除不需要的元素
         const removeSelectors = ['#sidebar']
         removeSelectors.forEach((selector) => {
-          content.querySelectorAll(selector).forEach((el) => el.remove())
+          mainContent.querySelectorAll(selector).forEach((el) => el.remove())
         })
 
         // 转换 mermaid 类名
-        content.querySelectorAll('pre.mermaid').forEach((el) => {
+        mainContent.querySelectorAll('pre.mermaid').forEach((el: Element) => {
           el.classList.remove('mermaid')
           el.classList.add('popover-mermaid')
           const wrapper = el.closest('.mermaid-wrapper')
@@ -310,20 +316,26 @@
           }
         })
 
+        const contentHtml = mainContent.innerHTML
+
         // 检查缓存大小，如果达到最大值则删除最旧的条目
         if (this.cachedContent.size >= this.MAX_CACHE_SIZE) {
           const firstKey = this.cachedContent.keys().next().value
-          this.cachedContent.delete(firstKey)
+          if (firstKey) {
+            this.cachedContent.delete(firstKey)
+          }
         }
 
         // 添加新内容到缓存
-        this.cachedContent.set(href, content)
+        this.cachedContent.set(href, contentHtml)
+        return contentHtml
       }
 
-      return content
+      return null
     }
 
-    private positionPreview(target) {
+    private positionPreview(target: HTMLElement) {
+      if (!this.tooltip) return
       const rect = target.getBoundingClientRect()
       const tooltipRect = this.tooltip.getBoundingClientRect()
 
@@ -348,19 +360,23 @@
     }
 
     setupDragging() {
-      this.header.addEventListener('mousedown', (e) => {
+      this.header?.addEventListener('mousedown', (e: MouseEvent) => {
         if (e.button !== 0) return
         this.isDragging = true
-        const rect = this.tooltip.getBoundingClientRect()
-        this.dragOffset = {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
+        const rect = this.tooltip?.getBoundingClientRect()
+        if (rect) {
+          this.dragOffset = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+          }
         }
-        this.header.style.cursor = 'grabbing'
+        if (this.header) {
+          this.header.style.cursor = 'grabbing'
+        }
       })
 
-      document.addEventListener('mousemove', (e) => {
-        if (!this.isDragging) return
+      document.addEventListener('mousemove', (e: MouseEvent) => {
+        if (!this.isDragging || !this.tooltip) return
         const x = e.clientX - this.dragOffset.x
         const y = e.clientY - this.dragOffset.y
         Object.assign(this.tooltip.style, { left: `${x}px`, top: `${y}px` })
@@ -368,13 +384,15 @@
 
       document.addEventListener('mouseup', () => {
         this.isDragging = false
-        this.header.style.cursor = 'grab'
+        if (this.header) {
+          this.header.style.cursor = 'grab'
+        }
       })
     }
 
     setupResize() {
-      this.resizeHandles.forEach((handle) => {
-        handle.addEventListener('mousedown', (e) => {
+      this.resizeHandles.forEach((handle: HTMLElement) => {
+        handle.addEventListener('mousedown', (e: MouseEvent) => {
           if (e.button !== 0) return
           e.preventDefault()
           this.isResizing = true
@@ -386,8 +404,8 @@
         })
       })
 
-      document.addEventListener('mousemove', (e) => {
-        if (!this.isResizing) return
+      document.addEventListener('mousemove', (e: MouseEvent) => {
+        if (!this.isResizing || !this.tooltip) return
         const rect = this.tooltip.getBoundingClientRect()
 
         if (this.resizeDirection.includes('e')) {
@@ -407,7 +425,7 @@
 
     setupThemeObserver() {
       // 监听系统主题变化
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async () => {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', async (e: MediaQueryListEvent) => {
         if (document.documentElement.dataset.theme === 'system') {
           await this.initializeMermaid()
           if (this.content) {
@@ -417,7 +435,7 @@
       })
 
       // 监听主题切换
-      const observer = new MutationObserver(async (mutations) => {
+      const observer = new MutationObserver(async (mutations: MutationRecord[]) => {
         for (const mutation of mutations) {
           if (mutation.attributeName === 'data-theme') {
             await this.initializeMermaid()
@@ -450,19 +468,19 @@
       }
     }
 
-    async renderMermaidDiagrams(container) {
+    async renderMermaidDiagrams(container: HTMLElement) {
       if (!window.mermaid) return
 
       const diagrams = container.querySelectorAll('pre.popover-mermaid')
-      for (const element of diagrams) {
+      for (const element of Array.from(diagrams)) {
         try {
           // 检查元素是否已经被渲染成 SVG
           if (element.querySelector('svg')) {
             // 如果已经是 SVG，清除内容重新渲染
-            element.innerHTML = element.getAttribute('data-diagram') || element.textContent
+            element.innerHTML = element.getAttribute('data-diagram') || element.textContent || ''
           } else {
             // 存储原始图表定义
-            element.setAttribute('data-diagram', element.textContent)
+            element.setAttribute('data-diagram', element.textContent || '')
           }
 
           // 移除之前的处理标记
@@ -474,7 +492,7 @@
         } catch (error) {
           console.error('Mermaid rendering error:', error)
           // 渲染失败时恢复原始内容
-          element.innerHTML = element.getAttribute('data-diagram') || element.textContent
+          element.innerHTML = element.getAttribute('data-diagram') || element.textContent || ''
         }
       }
     }

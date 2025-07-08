@@ -6,9 +6,13 @@ export interface MediaItem {
   id: number;
   type: 'image' | 'video';
   title: string;
-  desc: string;
+  desc?: string;
   url: string | ImageMetadata;
   span: string;
+  name?: string;
+  image: ImageMetadata;
+  date: string;
+  tag?: string[];
 }
 
 export interface Props {
