@@ -1,9 +1,9 @@
 ---
-import { Image } from 'astro:assets'
+// import { Image } from 'astro:assets'
 import config from 'virtual:config'
 
 // 直接导入图片
-import logoImage from '@/assets/avatar.jpeg'
+// import logoImage from '@/assets/avatar.jpeg'
 
 import { Icon } from '../user'
 ---
@@ -17,14 +17,14 @@ import { Icon } from '../user'
     href='/'
     aria-label='Brand'
   >
-    <Image
+    <!-- <Image
       src={logoImage}
       width={24}
       height={24}
       alt='Site Logo'
       class='size-9 object-cover rounded-full border border-border'
       loading='eager'
-    />
+    /> -->
     {config.title}
   </a>
 

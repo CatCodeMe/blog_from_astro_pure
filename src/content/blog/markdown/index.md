@@ -238,7 +238,7 @@ Preview:
 
 ### Other HTML Writing
 
-#### Foldable Blocks
+#### Foldable Blocks超长的标题中文Foldable Blocks超长的标题中文
 
 ```markdown
 <details><summary>Click to expand</summary>It is hidden</details>
