@@ -17,16 +17,10 @@ export interface Props {
   description: string;
 }
 
-const { mediaItems, title } = Astro.props;
+const { mediaItems } = Astro.props;
 ---
 
 <div class="px-4 py-8">
-  <!-- <div class="mb-8 text-center">
-    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white">
-      {title}
-    </h1>
-    
-  </div> -->
   <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-3 auto-rows-[100px]" id="bento-gallery-container">
     {
       mediaItems.map((item) => (
@@ -65,9 +59,9 @@ const { mediaItems, title } = Astro.props;
 
 <div id="gallery-modal-container" class="fixed inset-0 w-full h-full bg-black/90 backdrop-blur-xl z-50 hidden items-center justify-center">
   <div class="relative w-full h-full flex flex-col items-center justify-center">
-    <button id="modal-close" class="absolute top-6 right-6 text-white z-20">
+    <!-- <button id="modal-close" class="absolute top-6 right-6 text-white z-20">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
+    </button> -->
     <div id="modal-content-area" class="w-full h-[70%] flex items-center justify-center mb-4 relative"></div>
     <div id="modal-dock" class="w-full h-[20%] flex items-center justify-center gap-4 p-4 relative overflow-x-hidden hide-scrollbar">
         <div class="flex items-center -space-x-2 px-3 py-2 z-10" id="dock-items-wrapper"></div>
@@ -96,7 +90,7 @@ const { mediaItems, title } = Astro.props;
     const modalContentArea = document.getElementById('modal-content-area');
     const modalDock = document.getElementById('modal-dock');
     const dockItemsWrapper = document.getElementById('dock-items-wrapper');
-    const closeModalBtn = document.getElementById('modal-close');
+    // const closeModalBtn = document.getElementById('modal-close');
 
     const dockProgress = document.getElementById('dock-progress');
 
@@ -219,7 +213,7 @@ const { mediaItems, title } = Astro.props;
       document.removeEventListener('keydown', handleKeyDown);
     };
 
-    closeModalBtn.addEventListener('click', closeModal);
+    // closeModalBtn.addEventListener('click', closeModal);
     modalContainer.addEventListener('click', (e) => {
       if (e.target === modalContainer) {
         closeModal();
