@@ -17,7 +17,7 @@ const { headings, position = 'left', class: className } = Astro.props
   </div>
 </div>
 
-<style>
+<style is:global>
   /* 支持主题色自适应，默认深色，浅色主题自动变浅色 */
   :root {
     --toc-menu-bg: rgba(30, 30, 30, 0.95);
@@ -37,13 +37,13 @@ const { headings, position = 'left', class: className } = Astro.props
     --toc-menu-active-color: #2563eb;
   }
 
-  :root:is([data-theme='light'], [data-theme='system']) :global(.toc-full-menu) {
+  :root:is([data-theme='light'], [data-theme='system']) .toc-full-menu{
     color: #222 !important;
     border: 1px solid #e5e7eb !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
   }
 
-  :root:is([data-theme='light'], [data-theme='system']) :global(.toc-menu-item.active) {
+  :root:is([data-theme='light'], [data-theme='system']) .toc-menu-item.active{
     background: rgba(59, 130, 246, 0.08) !important;
     border-left: 3px solid #3b82f6 !important;
     color: #2563eb !important;
@@ -82,7 +82,7 @@ const { headings, position = 'left', class: className } = Astro.props
   }
 
   /* 优化 toc-line 样式为原型效果，h1~h4 匹配 menu 圆点色 */
-  :global(.toc-line) {
+  .toc-line{
     position: relative;
     height: 2px;
     border-radius: 1px;
@@ -92,36 +92,37 @@ const { headings, position = 'left', class: className } = Astro.props
     margin: 2px 0;
     background: #cbd5e0;
   }
-  :global(.toc-line[data-level='1']) {
+  .toc-line[data-level='1']{
     width: 40px;
     background: #3b82f6;
   }
-  :global(.toc-line[data-level='2']) {
+  .toc-line[data-level='2']{
     width: 30px;
     background: #10b981;
   }
-  :global(.toc-line[data-level='3']) {
+  .toc-line[data-level='3']{
     width: 22px;
     background: #f59e0b;
   }
-  :global(.toc-line[data-level='4']) {
+  .toc-line[data-level='4']{
     width: 14px;
     background: #ef4444;
   }
-  :global(.toc-line[data-level='5']) {
+  .toc-line[data-level='5']{
     width: 10px;
     background: #9ca3af;
   }
-  :global(.toc-line[data-level='6']) {
+  .toc-line[data-level='6']{
     width: 8px;
     background: #6b7280;
   }
-  :global(.toc-line:hover) {
+  .toc-line:hover{
     opacity: 1;
-    /* transform: scaleY(2); */
-    transform: scaleY(3) scaleX(1);
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-    animation: tocLineWave 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #3b82f6;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    transition: background 0.18s;
   }
   /* 波动动画：active 时宽度延长并有动画 */
   @keyframes tocLineWave {
@@ -138,14 +139,14 @@ const { headings, position = 'left', class: className } = Astro.props
       transform: scaleY(3) scaleX(1);
     }
   }
-  :global(.toc-line.active) {
+  .toc-line.active{
     opacity: 1;
     transform: scaleY(3) scaleX(1);
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
     animation: tocLineWave 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  :global(.toc-full-menu) {
+  .toc-full-menu{
     position: absolute !important;
     left: calc(100% + 20px) !important;
     top: 0 !important;
@@ -174,23 +175,26 @@ const { headings, position = 'left', class: className } = Astro.props
       'Microsoft YaHei', sans-serif !important; */
     word-break: break-all !important;
   }
-  :global(.toc-full-menu-content) {
-    padding-right: 15px !important;
+  .toc-full-menu-content{
+    padding: 24px 12px 24px 0 !important; /* 右边距12px，左边距0，内容更贴近左侧 */
   }
-  :global(.toc-full-menu)::-webkit-scrollbar {
+  .toc-accordion.right .toc-full-menu-content{
+    padding: 24px 0 24px 12px !important; /* 右侧模式，左边距12px，右边距0 */
+  }
+  .toc-full-menu::-webkit-scrollbar {
     width: 6px;
   }
-  :global(.toc-full-menu)::-webkit-scrollbar-track {
+  .toc-full-menu::-webkit-scrollbar-track {
     background: transparent;
   }
-  :global(.toc-full-menu)::-webkit-scrollbar-thumb {
+  .toc-full-menu::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
   }
-  :global(.toc-full-menu)::-webkit-scrollbar-thumb:hover {
+  .toc-full-menu::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
   }
-  :global(.toc-full-menu)::after {
+  .toc-full-menu::after {
     content: '';
     position: absolute;
     left: 100%;
@@ -198,71 +202,68 @@ const { headings, position = 'left', class: className } = Astro.props
     border: 8px solid transparent;
     border-left-color: var(--toc-menu-bg, rgba(30, 30, 30, 0.95));
   }
-  :global(.toc-accordion.right .toc-full-menu) {
+  .toc-accordion.right .toc-full-menu{
     left: auto !important;
     right: calc(100% + 20px) !important;
     transform: translateX(-20px) !important;
   }
-  :global(.toc-accordion.right .toc-full-menu)::after {
+  .toc-accordion.right .toc-full-menu::after {
     left: auto;
     right: 100%;
     border-left-color: transparent;
     border-right-color: var(--toc-menu-bg, rgba(30, 30, 30, 0.95));
   }
-  :global(.toc-accordion:hover .toc-full-menu) {
+  .toc-accordion:hover .toc-full-menu{
     opacity: 1 !important;
     transform: translateX(0) !important;
     pointer-events: auto !important;
   }
-  :global(.toc-menu-item) {
+  .toc-menu-item{
     padding: 6px 8px !important;
-    margin: 2px 0 !important;
-    cursor: pointer !important;
+    margin: 1px 0 !important;
     border-radius: 4px !important;
-    transition: background-color 0.2s ease !important;
-    display: flex !important;
-    align-items: center !important;
-    font-size: 13px !important;
-    font-weight: 400 !important;
-    font-family: inherit !important;
+    transition: background 0.18s, color 0.18s;
+    box-sizing: border-box;
   }
-  :global(.toc-menu-item:hover) {
-    background: rgba(255, 255, 255, 0.1) !important;
+  .toc-menu-item:hover{
+    background: rgba(59,130,246,0.10) !important;
+    color: #2563eb !important;
+    /* 无边框无阴影 */
   }
-  :global(.toc-menu-item.active) {
+  .toc-menu-item.active{
     background: var(--toc-menu-active-bg) !important;
     border-left: 3px solid #3b82f6 !important;
     color: var(--toc-menu-active-color) !important;
   }
-  :global(.toc-menu-item.level-1) {
+  .toc-menu-item.level-1{
     font-weight: 600 !important;
     margin-left: 0 !important;
   }
-  :global(.toc-menu-item.level-2) {
+  .toc-menu-item.level-2{
     margin-left: 15px !important;
     font-size: 12px !important;
   }
-  :global(.toc-menu-item.level-3) {
+  .toc-menu-item.level-3{
     margin-left: 30px !important;
     font-size: 11px !important;
     opacity: 0.9 !important;
   }
-  :global(.toc-menu-item.level-4) {
+  .toc-menu-item.level-4{
     margin-left: 45px !important;
     font-size: 11px !important;
     opacity: 0.8 !important;
   }
-  :global(.toc-menu-item.level-5) {
+  .toc-menu-item.level-5{
     margin-left: 60px !important;
     font-size: 10px !important;
     opacity: 0.7 !important;
   }
-  :global(.toc-menu-item.level-6) {
+  .toc-menu-item.level-6{
     margin-left: 75px !important;
     font-size: 10px !important;
     opacity: 0.6 !important;
   }
-  :global(.toc-menu-level-indicator) {
+  .toc-menu-level-indicator{
     display: inline-block !important;
     width: 8px !important;
     height: 8px !important;
@@ -270,22 +271,22 @@ const { headings, position = 'left', class: className } = Astro.props
     margin-right: 8px !important;
     flex-shrink: 0 !important;
   }
-  :global(.toc-menu-item.level-1 .toc-menu-level-indicator) {
+  .toc-menu-item.level-1 .toc-menu-level-indicator{
     background: #3b82f6 !important;
   }
-  :global(.toc-menu-item.level-2 .toc-menu-level-indicator) {
+  .toc-menu-item.level-2 .toc-menu-level-indicator{
     background: #10b981 !important;
   }
-  :global(.toc-menu-item.level-3 .toc-menu-level-indicator) {
+  .toc-menu-item.level-3 .toc-menu-level-indicator{
     background: #f59e0b !important;
   }
-  :global(.toc-menu-item.level-4 .toc-menu-level-indicator) {
+  .toc-menu-item.level-4 .toc-menu-level-indicator{
     background: #ef4444 !important;
   }
-  :global(.toc-menu-item.level-5 .toc-menu-level-indicator) {
+  .toc-menu-item.level-5 .toc-menu-level-indicator{
     background: #9ca3af !important;
   }
-  :global(.toc-menu-item.level-6 .toc-menu-level-indicator) {
+  .toc-menu-item.level-6 .toc-menu-level-indicator{
     background: #6b7280 !important;
   }
   /* 响应式隐藏 */
@@ -403,6 +404,10 @@ const { headings, position = 'left', class: className } = Astro.props
           const targetElement = document.getElementById(targetId)
           if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            setTimeout(() => {
+              this.recalculatePositions()
+              this.updateActiveState()
+            }, 400)
           }
         }
       })
@@ -411,30 +416,25 @@ const { headings, position = 'left', class: className } = Astro.props
       this.toc.addEventListener('mouseenter', () => {
         if (!this.menuLocked) {
           this.isMenuVisible = true
+          this.tocFullMenu.classList.add('show')
           this.scrollToActiveItem()
         }
       })
-      this.toc.addEventListener('mouseleave', (e) => {
-        if (!this.menuLocked) {
-          // 只有鼠标完全离开 toc-accordion 和 menu 区域才隐藏
-          const related = e.relatedTarget
-          if (!this.toc.contains(related)) {
-            this.isMenuVisible = false
-          }
-        }
-      })
+      // 移除 menu hover 消失逻辑，确保点击后不会因 hover 离开而消失
+      // this.toc.addEventListener('mouseleave', ...)
+      // this.tocFullMenu.addEventListener('mouseleave', ...)
       this.toc.addEventListener('click', (e) => {
-        // 点击 toc-accordion 区域锁定/解锁 menu
         if (e.target.closest('.toc-full-menu')) return
         this.menuLocked = !this.menuLocked
         this.isMenuVisible = this.menuLocked || this.isMenuVisible
         if (this.menuLocked) this.scrollToActiveItem()
+        if (!this.menuLocked) this.tocFullMenu.classList.remove('show')
       })
-      // 点击页面空白处自动解锁
       document.addEventListener('click', (e) => {
         if (!this.toc.contains(e.target)) {
           this.menuLocked = false
           this.isMenuVisible = false
+          this.tocFullMenu.classList.remove('show')
         }
       })
       let ticking = false
@@ -456,14 +456,20 @@ const { headings, position = 'left', class: className } = Astro.props
       })
     }
     updateActiveState() {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      // 获取所有可见 heading 的 top
       const offset = 100
       let activeIndex = 0
+      let minDelta = Infinity
       for (let i = 0; i < this.headings.length; i++) {
-        if (this.headings[i].element && this.headings[i].top - offset > scrollTop) {
-          break
+        if (!this.headings[i].element) continue
+        // 计算 heading 距离视口顶部的距离
+        const rect = this.headings[i].element.getBoundingClientRect()
+        const delta = Math.abs(rect.top - offset)
+        // 只考虑在视口顶部及以上的 heading，且距离最小
+        if (rect.top - offset <= 0 && delta < minDelta) {
+          minDelta = delta
+          activeIndex = i
         }
-        activeIndex = i
       }
       if (activeIndex !== this.currentActiveIndex) {
         const lines = this.tocLines.querySelectorAll('.toc-line')
