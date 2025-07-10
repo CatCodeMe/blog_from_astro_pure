@@ -49,15 +49,20 @@ const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString()
 const primaryColor = data.heroImage?.color ?? 'hsl(var(--primary) / var(--un-text-opacity))'
 ---
 
-{!!headings.length && headings.length > 4 && <AccordionTOC headings={headings} position='left' />}
-
 <PageLayout
   meta={{ articleDate, description, ogImage: socialImage, title }}
   highlightColor={primaryColor}
   back='/blog'
 >
-  {!!headings.length && headings.length <= 4 && <TOC {headings} slot='sidebar'/>}
-  
+  {/* 手风琴目录专用 slot，支持贴边布局 */}
+  {!!headings.length && headings.length > 4 && (
+    <AccordionTOC headings={headings} position='right' slot='handletoc' />
+  )}
+  {/* 右侧 sidebar 只显示普通 TOC */}
+  {!!headings.length && headings.length <= 4 && (
+    <TOC {headings} slot='sidebar' />
+  )}
+
   <Hero {data} {remarkPluginFrontmatter} slot='header' />
 
   <slot />

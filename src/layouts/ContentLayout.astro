@@ -26,6 +26,8 @@ const { meta, highlightColor, back = '/', ...props } = Astro.props
     class='fixed bottom-4 left-4 z-50 md:bottom-8 md:left-8'
   />
   <main class='mt-6 items-start gap-x-10 md:flex'>
+    {/* 新增 handletoc slot，支持手风琴贴边布局 */}
+    <slot name='handletoc' />
     <LinkPreview />
 
     {/* Sidebar */}
