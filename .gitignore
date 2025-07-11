@@ -82,8 +82,4 @@ bunfig.toml
 .idea/*
 .vscode/*
 
-
-.vscode
-.idea
-.demo
 gemini.md
