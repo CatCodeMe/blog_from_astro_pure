@@ -148,6 +148,20 @@ export const integ: IntegrationUserConfig = {
         placeholder: '欢迎留言~ (邮箱用于接收回复通知，不会公开)'
       }
     }
+  },
+  giscus: {
+    enable: true,
+    repo: 'CatCodeMe/catcodeme.github.io', // 仓库名
+    repoId: 'R_kgDOLTuIuQ', // 仓库 ID
+    category: 'General', // 分类名
+    categoryId: 'DIC_kwDOLTuIuc4Csz7O', // 分类 ID
+    mapping: 'og:title', // 评论关联方式
+    strict: '0',
+    reactionsEnabled: '1',
+    emitMetadata: '0',
+    inputPosition: 'top',
+    theme: 'preferred_color_scheme', // 可选: light, dark, transparent_dark, preferred_color_scheme
+    lang: 'en'
   }
 }
 
