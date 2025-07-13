@@ -59,6 +59,9 @@ export const theme: ThemeUserConfig = {
 
   /** Configure the footer of your site. */
   footer: {
+    // Year format
+    year: `© ${new Date().getFullYear()}`,
+    // year: `© 2019 - ${new Date().getFullYear()}`,
     links: [
       // {
       //   title: 'Moe ICP APTX4869',
@@ -118,7 +121,11 @@ export const integ: IntegrationUserConfig = {
   // UnoCSS typography
   // See: https://unocss.dev/presets/typography
   typography: {
-    class: 'prose text-base text-muted-foreground'
+    class: 'prose text-base text-muted-foreground',
+    // The style of blockquote font, normal or italic (default to italic in typography)
+    blockquoteStyle: 'italic',
+    // The style of inline code block, code or modern (default to code in typography)
+    inlineCodeBlockStyle: 'modern'
   },
   // A lightbox library that can add zoom effect
   // See: https://astro-pure.js.org/docs/integrations/others#medium-zoom

@@ -21,7 +21,8 @@ interface Props {
 
 const {
   meta: { articleDate, description = config.description, ogImage, title },
-  highlightColor
+  highlightColor,
+  ...props
 } = Astro.props
 ---
 
@@ -31,7 +32,7 @@ const {
     <ThemeProvider />
   </head>
 
-  <body class='flex justify-center bg-background text-foreground'>
+  <body class='flex justify-center bg-background text-foreground' {...props}>
     {
       highlightColor && (
         <div

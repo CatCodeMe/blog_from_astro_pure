@@ -119,6 +119,8 @@ export const ThemeConfigSchema = () =>
 
     /** Configure the footer of your site. */
     footer: z.object({
+      /** The footer content for your site. */
+      year: z.string().describe('The footer content for your site.'),
       /** The footer links for your site. */
       links: z
         .array(
