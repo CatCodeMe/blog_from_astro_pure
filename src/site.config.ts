@@ -16,11 +16,11 @@ export const theme: ThemeUserConfig = {
     lang: 'zh-CN',
     attrs: 'en_US',
     // Date locale
-    dateLocale: 'en-US', // 使用英文区域设置避免月份显示中文
+    dateLocale: 'en-US',
     dateOptions: {
-      year: 'numeric',
-      month: 'short',
       day: 'numeric',
+      month: 'short',
+      year: 'numeric'
     }
   },
   /** Set a logo image to show in the homepage. */
@@ -34,7 +34,7 @@ export const theme: ThemeUserConfig = {
   prerender: true,
   npmCDN: 'https://cdn.jsdelivr.net/npm',
 
-  // still in test
+  // Still in test
   head: [
     /* Telegram channel */
     // {
@@ -65,11 +65,11 @@ export const theme: ThemeUserConfig = {
       //   link: 'https://icp.gov.moe/?keyword=APTX4869',
       //   style: 'text-sm'
       // },
-      {
-        title: 'CC BY-NC-SA 4.0',
-        link: '/terms/list',
-        pos: 2
-      }
+      // {
+      //   title: 'CC BY-NC-SA 4.0',
+      //   link: '/terms/list',
+      //   pos: 2
+      // }
     ],
     credits: true,
     social: { github: 'https://github.com/catcodeme' }

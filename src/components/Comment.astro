@@ -3,7 +3,7 @@ import config from '../site.config'
 const giscus = config.integ.giscus
 ---
 
-{giscus.enable && (
+{giscus && giscus.enable && (
   <div class="giscus-container">
     <script src="https://giscus.app/client.js"
       data-repo={giscus.repo}
@@ -14,7 +14,7 @@ const giscus = config.integ.giscus
       data-strict={giscus.strict || '0'}
       data-reactions-enabled={giscus.reactionsEnabled || '1'}
       data-emit-metadata={giscus.emitMetadata || '0'}
-      data-input-position={giscus.inputPosition || 'bottom'}
+      data-input-position={giscus.inputPosition || 'top'}
       data-theme={giscus.theme || 'light'}
       data-lang={giscus.lang || 'zh-CN'}
       crossorigin="anonymous"

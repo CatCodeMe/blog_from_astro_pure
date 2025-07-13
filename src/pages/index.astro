@@ -25,10 +25,10 @@ const backend = [
   { name: 'Apache Spark', icon: 'devicon:apachespark' }
 ]
 
-const ide = [
-  { name: 'VSCode', icon: 'devicon:vscode' },
-  { name: 'IntelliJ IDEA', icon: 'devicon:intellij' }
-]
+// const ide = [
+//   { name: 'VSCode', icon: 'devicon:vscode' },
+//   { name: 'IntelliJ IDEA', icon: 'devicon:intellij' }
+// ]
 
 const MAX_POSTS = 10
 const allPosts = await getBlogCollection()
@@ -199,7 +199,7 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
         <Section title='Skills' class='mt-20'>
           <SkillLayout title='Languages' skills={languages} />
           <SkillLayout title='Backend' skills={backend} />
-          <SkillLayout title='IDE' skills={ide} />
+          <!-- <SkillLayout title='IDE' skills={ide} /> -->
         </Section>
 
         <!-- GitHub 活动图 -->
