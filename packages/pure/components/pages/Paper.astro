@@ -1,6 +1,8 @@
 ---
 import type { HTMLTag, Polymorphic } from 'astro/types'
+
 import { Icon } from 'astro-pure/user'
+
 import { cn } from '../../utils'
 
 type Paper = {
@@ -31,7 +33,7 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
 
 <Tag
   class={cn(
-    'group flex relative gap-6 p-6 rounded-xl transition-all duration-300 overflow-hidden',
+    'group flex relative gap-6 p-6 rounded-[var(--radius)] transition-all duration-300 overflow-hidden',
     'bg-white dark:bg-zinc-900',
     'border border-zinc-100 dark:border-zinc-800',
     'hover:border-zinc-200 dark:hover:border-zinc-700',
@@ -40,44 +42,42 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
   )}
 >
   {/* Star 评分 - 右上角 + 编号 */}
-  {(starCount > 0 || typeof paper.index === 'number') && (
-    <div class='absolute top-4 right-4 flex items-center gap-1 z-20'>
-      {starCount > 0 && (
-        <div class='flex gap-0.5'>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Icon
-              name='star'
-              class={cn(
-                'size-4',
-                i < starCount ? 'text-yellow-400' : 'text-zinc-200 dark:text-zinc-700'
-              )}
-            />
-          ))}
-        </div>
-      )}
-      {typeof paper.index === 'number' && (
-        <span class="ml-2 text-xs text-zinc-300 dark:text-zinc-600 font-mono select-none">No.{String(paper.index).padStart(2, '0')}</span>
-      )}
-    </div>
-  )}
+  {
+    (starCount > 0 || typeof paper.index === 'number') && (
+      <div class='absolute top-4 right-4 flex items-center gap-1 z-20'>
+        {starCount > 0 && (
+          <div class='flex gap-0.5'>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Icon
+                name='star'
+                class={cn(
+                  'size-4',
+                  i < starCount ? 'text-yellow-400' : 'text-zinc-200 dark:text-zinc-700'
+                )}
+              />
+            ))}
+          </div>
+        )}
+        {typeof paper.index === 'number' && (
+          <span class='ml-2 text-xs text-zinc-300 dark:text-zinc-600 font-mono select-none'>
+            No.{String(paper.index).padStart(2, '0')}
+          </span>
+        )}
+      </div>
+    )
+  }
 
   {/* 右下角倾斜卡片，仅主图标和链接 */}
-  <div class="paper-card-icon-preview">
-    <div class="paper-preview-container">
-      <Icon
-        name={data.isbn ? 'paper_book' : 'paper_article'}
-        class="paper-icon"
-      />
-      {data.paperUrl && (
-        <a
-          href={data.paperUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="paper-link"
-        >
-          View &gt;&gt;
-        </a>
-      )}
+  <div class='paper-card-icon-preview'>
+    <div class='paper-preview-container'>
+      <Icon name={data.isbn ? 'paper_book' : 'paper_article'} class='paper-icon' />
+      {
+        data.paperUrl && (
+          <a href={data.paperUrl} target='_blank' rel='noopener noreferrer' class='paper-link'>
+            View &gt;&gt;
+          </a>
+        )
+      }
     </div>
   </div>
 
@@ -189,11 +189,11 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    border-radius: 0.7rem;
+    border-radius: var(--radius);
     border: 1px solid #e2e8f0; /* 亮色下深灰 */
     background: var(--background);
     user-select: none;
-    transform: scale(1.1) rotate(0.18rad) translateY(30%);
+    transform: scale(1) rotate(0.18rad) translateY(30%);
     transition: transform 300ms ease-out;
     will-change: transform;
     backface-visibility: hidden;
@@ -206,7 +206,7 @@ const starCount = data.star ? Math.min(Math.max(data.star, 0), 5) : 0
     border-color: #f3f4f6; /* 暗色下浅灰 */
   }
   .group:hover .paper-preview-container {
-    transform: scale(1.04) rotate(0.04rad) translateY(30%);
+    transform: scale(1.04) rotate(0) translateY(15%);
     transition: transform 400ms cubic-bezier(0, 0.9, 0.5, 1.35);
   }
   .paper-icon {

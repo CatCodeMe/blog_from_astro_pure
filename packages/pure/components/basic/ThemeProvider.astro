@@ -15,7 +15,6 @@
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', theme === 'dark' ? '#0B0B10' : '#FCFCFD')
   }
-
   simpleSetTheme()
   document.addEventListener('astro:page-load', () => simpleSetTheme())
 </script>
